@@ -531,6 +531,113 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
 .foot p{font-size:12.5px;color:var(--faint)}
 .proto-note{margin-top:14px;font-size:12.5px;color:var(--faint);border-top:1px solid var(--line);padding-top:12px}
 
+/* ---------- evidence: real photos and drawings, muted to the drawing language at rest, in true colour once opened.
+   A stage's strip sits under its specs; a thumbnail opens a plate in the exhibition, pinned by a leader to the part of the
+   model it shows. The plate is an info layer over the scene: scroll still drives the build, and leaving the stage closes it */
+.evs{margin-top:22px}
+.evs-hd{margin:0;display:flex;justify-content:space-between;gap:12px;font:400 10px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:8px}
+.evs ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.ev{all:unset;box-sizing:border-box;position:relative;display:block;width:100%;aspect-ratio:3/4;cursor:pointer;overflow:hidden;
+  background:#0d3560;border:1px solid var(--line2)}
+.ev img{display:block;width:100%;height:100%;object-fit:cover;mix-blend-mode:luminosity;opacity:.82;filter:contrast(1.08);transition:opacity .3s var(--ease)}
+.ev:hover img,.ev:focus-visible img,.ev.on img{mix-blend-mode:normal;opacity:1;filter:none}
+.ev .tg{position:absolute;left:0;right:0;bottom:0;padding:14px 6px 5px;font:500 9px/1 var(--mono);letter-spacing:.08em;color:var(--ink);
+  background:linear-gradient(to top,rgba(5,10,20,.88),rgba(5,10,20,0))}
+.ev.on{border-color:var(--blue2);box-shadow:inset 0 0 0 1px var(--blue2)}
+.ev:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+/* the plate: a drawing-sheet card in the exhibition's left half, clear of the telemetry; the camera re-frames the module
+   into what is left on the right. A wheel over it still scrolls the page (and so the build), so no scroll containment */
+.plate{--c:var(--blue2);position:fixed;z-index:4;top:64px;left:calc(var(--nav) + var(--content) + 40px);
+  width:clamp(260px,calc((100vw - var(--nav) - var(--content)) * .42),420px);max-height:calc(100vh - 64px - 74px);box-sizing:border-box;
+  display:flex;flex-direction:column;background:rgba(5,12,30,.9);border:1px solid var(--line2);border-top:2px solid var(--c);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 24px 60px rgba(0,0,0,.55);outline:0;
+  opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .3s var(--ease),transform .3s var(--ease),visibility 0s .3s}
+.plate.open{opacity:1;visibility:visible;transform:none;transition:opacity .35s var(--ease),transform .35s var(--ease)}
+.plate.power{--c:var(--power)}.plate.cool{--c:var(--cool)}.plate.it{--c:var(--it)}.plate.safe{--c:var(--safe)}.plate.ok{--c:var(--ok)}
+.pl-hd{display:flex;align-items:center;gap:10px;padding:8px 6px 8px 12px;border-bottom:1px solid var(--line);
+  font:400 10px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.pl-hd b{font-weight:500;color:var(--c)}
+.pl-hd #pl-ctx{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pl-x{display:grid;place-items:center;width:30px;height:30px;background:none;border:0;padding:0;color:var(--dim);cursor:pointer}
+.pl-x:hover{color:#fff}.pl-x svg{width:12px;height:12px}
+.pl-body{overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--line3) transparent;padding:12px}
+.pl-fig{margin:0}
+/* the frame: hairline with corner marks, the photo contained so nothing is cropped */
+.pl-frame{position:relative;aspect-ratio:var(--ar,3/4);max-height:52vh;width:100%;background:#030814;border:1px solid var(--line)}
+.pl-frame::before,.pl-frame::after{content:"";position:absolute;width:10px;height:10px;border:0 solid var(--c);pointer-events:none;z-index:1}
+.pl-frame::before{top:-1px;left:-1px;border-top-width:1px;border-left-width:1px}
+.pl-frame::after{bottom:-1px;right:-1px;border-bottom-width:1px;border-right-width:1px}
+.pl-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.pl-frame.scan{background:#e9ebee}
+.pl-frame .wh{position:absolute;inset:0;display:grid;place-content:center;gap:8px;padding:24px;text-align:center;
+  background:repeating-linear-gradient(135deg,rgba(150,190,240,.07) 0 1px,transparent 1px 9px),#061230;
+  font:400 10.5px/1.5 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+.pl-frame .wh b{font:500 15px var(--hd);letter-spacing:0;text-transform:none;color:var(--ink)}
+.pl-fig figcaption{margin-top:10px;font-size:14px;line-height:1.45;color:var(--ink)}
+.pl-meta{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;margin:12px 0 0;padding-top:10px;border-top:1px solid var(--line)}
+.pl-meta dt{font:400 9.5px/1.9 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.pl-meta dd{margin:0;font-size:13px;line-height:1.45;color:var(--dim);min-width:0}
+.pl-meta dd b{font-weight:500;color:var(--ink)}
+.pl-ft{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;border-top:1px solid var(--line);
+  font:400 10.5px var(--mono);letter-spacing:.12em;color:var(--faint);font-variant-numeric:tabular-nums}
+.pl-pg{display:flex;align-items:center;gap:6px}
+.pl-pg button{width:28px;height:28px;background:none;border:1px solid var(--line2);color:var(--ink);font:400 15px/1 var(--hd);cursor:pointer}
+.pl-pg button:hover{border-color:var(--c);color:var(--c)}
+.pl-ft a{color:var(--dim);text-decoration:none;letter-spacing:.1em;text-transform:uppercase;font-size:10px}
+.pl-ft a:hover{color:#fff}
+/* leader: plate edge → elbow → pin on the model, in the plate's system colour */
+.leader{position:fixed;inset:0;width:100%;height:100%;z-index:4;pointer-events:none;opacity:0;transition:opacity .3s var(--ease);color:var(--blue2)}
+.leader.on{opacity:1}
+.leader path{fill:none;stroke:currentColor;stroke-width:1;stroke-dasharray:3 3}
+.leader .pt{fill:currentColor}
+.leader .rg{fill:none;stroke:currentColor;stroke-width:1;opacity:.6}
+@media (prefers-reduced-motion:no-preference){.leader .rg{animation:ring 2.2s ease-out infinite;transform-box:fill-box;transform-origin:center}}
+@keyframes ring{0%{transform:scale(.4);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+.leader.power{color:var(--power)}.leader.cool{color:var(--cool)}.leader.it{color:var(--it)}.leader.safe{color:var(--safe)}.leader.ok{color:var(--ok)}
+body.prod .plate,body.prod .leader{display:none}
+/* narrow exhibition (tablets in portrait, small windows): no room for plate and model side by side, so the plate takes
+   the whole exhibition and the telemetry steps aside while it is open; no leader, the model is behind it */
+html.pl-full .plate{left:calc(var(--nav) + var(--content));right:0;top:var(--bar,0px);bottom:0;width:auto;max-height:none;
+  border-top-width:2px;border-left:0;border-right:0;border-bottom:0;box-shadow:none;background:rgba(5,12,30,.96)}
+html.pl-full .pl-frame{max-height:calc(100vh - var(--bar,0px) - 250px)}
+html.pl-full .pl-body{flex:1}
+html.pl-full .leader{display:none}
+html.pl-full .exh .tele{opacity:0!important;visibility:hidden}
+
+/* certification register: three groups, a document thumbnail per row; a row opens the scan as a plate */
+.reg{margin-top:6px}
+.reg-g{margin-top:22px}
+.reg-g h4{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:0;padding-bottom:8px;border-bottom:1px solid var(--line2);
+  font:400 10.5px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#8fb2da}
+.reg-g h4 small{font-size:10px;letter-spacing:.08em;color:var(--faint);text-transform:none}
+.reg-g > p{margin:8px 0 2px;font-size:14px;color:var(--dim)}
+.reg ol{list-style:none;margin:0;padding:0}
+.crt{all:unset;box-sizing:border-box;display:grid;grid-template-columns:36px 1fr auto;gap:1px 14px;align-items:center;width:100%;padding:10px 0;border-bottom:1px solid var(--line);cursor:pointer}
+.crt .th{grid-row:span 2;width:36px;aspect-ratio:1/1.414;background:#0d3560;border:1px solid var(--line2);overflow:hidden}
+.crt .th img{display:block;width:100%;height:100%;object-fit:cover;mix-blend-mode:luminosity;opacity:.85}
+.crt .th.wh{background:repeating-linear-gradient(135deg,rgba(150,190,240,.16) 0 1px,transparent 1px 5px),#061230}
+.crt .dn{font-size:14px;color:var(--dim);min-width:0}
+.crt .dn b{font:500 15px var(--hd);color:var(--ink);margin-right:6px}
+.crt .dm{grid-column:2;font:400 10.5px var(--mono);letter-spacing:.06em;color:var(--faint)}
+.crt .dv{grid-row:1 / span 2;grid-column:3;font:400 10.5px var(--mono);letter-spacing:.06em;color:var(--dim);text-align:right;white-space:nowrap}
+.crt .dv span{display:block;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.crt:hover .dn b,.crt.on .dn b{color:#fff}
+.crt:hover .th img,.crt.on .th img{mix-blend-mode:normal;opacity:1}
+.crt.on{box-shadow:inset 3px 0 0 var(--blue);padding-left:12px;grid-template-columns:36px 1fr auto}
+.crt:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+/* phones: no exhibition, so the plate opens over the reading area under the band, without a leader */
+@media (max-width:700px),(max-width:960px) and (max-height:500px){
+  .plate{top:var(--top);left:0;right:0;bottom:0;width:auto;max-height:none;border-left:0;border-right:0;box-shadow:none;background:rgba(5,10,20,.97);z-index:7}
+  .pl-frame{max-height:none}
+  .pl-body{overscroll-behavior:contain}
+  .leader{display:none}
+  .pl-x,.pl-pg button{width:44px;height:44px}
+  .evs ol{grid-template-columns:repeat(4,1fr)}
+}
+@media (prefers-reduced-motion:reduce){.plate,.plate.open,.leader,.ev img{transition:none}}
+
 /* ---------- short laptops: drop the ruler and title block, keep telemetry */
 @media (max-height:700px){.tblock,.racks{display:none}}
 @media (max-width:1180px){.ruler{display:none}}
@@ -615,7 +722,7 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
   .railbg{z-index:-1}
   .hero::before{position:absolute;top:auto;bottom:0;left:0;right:0;width:auto;height:78%;z-index:7;
     background:linear-gradient(to top,rgba(5,10,20,.94) 0%,rgba(5,10,20,.82) 42%,rgba(5,10,20,0) 100%)}
-  .hero > *{position:relative;z-index:8;opacity:var(--hf,1);transform:translateY(calc((1 - var(--hf,1)) * -18px))}
+  .hero > *{position:relative;z-index:7;opacity:var(--hf,1);transform:translateY(calc((1 - var(--hf,1)) * -18px))}
   /* the readout sits over the model, on a short fade */
   .band{display:flex;position:fixed;top:var(--bar);left:0;right:0;height:var(--vis);z-index:6;box-sizing:border-box;pointer-events:none;
     justify-content:space-between;align-items:flex-end;padding:0 max(16px,env(safe-area-inset-right,0px)) 7px max(22px,env(safe-area-inset-left,0px));
@@ -920,18 +1027,8 @@ html.lean .pw-view::before{display:none}
       </div>
       <div class="sub" id="certs" data-t="7.6">
         <h3>Certifications</h3>
-        <ul class="list">
-          <li><span><b>SR EN ISO 9001:2015</b> · Quality management</span><small>TÜV România · 2023</small></li>
-          <li><span><b>SR EN ISO 14001:2015</b> · Environmental management</span><small>TÜV România · 2023</small></li>
-          <li><span><b>SR EN ISO/IEC 27001:2023</b> · Information security</span><small>TÜV România · 2023</small></li>
-          <li><span><b>ISO/IEC 20000-1:2018</b> · IT service management</span><small>TÜV România · 2023</small></li>
-          <li><span><b>SR EN ISO 45001:2023</b> · Occupational health and safety</span><small>TÜV România · 2023</small></li>
-          <li><span><b>Master EcoXpert™</b> · Critical IT infrastructure</span><small>Schneider · 2022</small></li>
-          <li><span><b>Master EcoXpert™</b> · Precision cooling</span><small>Schneider · 2022</small></li>
-          <li><span><b>R&amp;M Authorized Partner</b> · LAN designer, LAN installation, inteliPhy</span><small>R&amp;M · 2021</small></li>
-          <li><span><b>ANRE Type B</b> · LV installations 0.4 kV</span><small>ANRE · 2020</small></li>
-          <li><span><b>AGFR Category I</b> · Fluorinated gases</span><small>AGFR · 2020</small></li>
-        </ul>
+        <p>Held by Synotech Global Services Romania SRL, part of the Synotech group. Select one to read the certificate. <span class="chk" title="A19: certificates are held by Synotech Global Services Romania SRL, not Modularix; shown as group certifications">A19</span></p>
+        <div class="reg" id="reg"></div>
       </div>
       <div class="sub" id="partners" data-t="8">
         <h3>Partners</h3>
@@ -974,15 +1071,24 @@ html.lean .pw-view::before{display:none}
       <dl><dt>Email</dt><dd><a href="mailto:office@modularix.com">office@modularix.com</a></dd><dt>Phone</dt><dd><a href="tel:+40722598251">+40 722 598 251</a></dd><dt>Office</dt><dd>Bucharest, Romania</dd></dl>
       <div class="foot">
         <p>© 2026 Modularix. A Synotech company.</p>
-        <p class="proto-note">Stage 4: the first screen plays a looping showreel on site (the module builds from the frame up, opens to show the systems going in, explodes into six layers and closes, then the campus grows around it) and hands back to the scroll build between Overview and Solutions. Stage 3: product drill-down. Stage 5: phones and tablets in portrait swap the nav rail for a top bar (logo, Menu, Quote; Menu and Quote pull down full screen); on phones the build plays in a band under it, without pins, and tablets in portrait keep the content and exhibition rails side by side. Red chips mark figures and claims being confirmed with Modularix (hidden for now; add ?review to the URL to show them); hover a chip for the reason. Telemetry readings are simulated demo values.</p>
+        <p class="proto-note">Evidence: each build stage ends in a strip of real photos and drawings (the reference build, plus photos from the current Projects page); one opens as a plate in the exhibition, pinned to the part of the model it shows, and closes when you scroll on. Certifications are a register read off the scans themselves. Stage 4: the first screen plays a looping showreel on site (the module builds from the frame up, opens to show the systems going in, explodes into six layers and closes, then the campus grows around it) and hands back to the scroll build between Overview and Solutions. Stage 3: product drill-down. Stage 5: phones and tablets in portrait swap the nav rail for a top bar (logo, Menu, Quote; Menu and Quote pull down full screen); on phones the build plays in a band under it, without pins, and tablets in portrait keep the content and exhibition rails side by side. Red chips mark figures and claims being confirmed with Modularix (hidden for now; add ?review to the URL to show them); hover a chip for the reason. Telemetry readings are simulated demo values.</p>
       </div>
     </div>
   </section>
 </main>
 
+<!-- evidence plate: one photo, drawing or certificate at a time, opened from a stage's strip or the register -->
+<aside class="plate" id="plate" role="dialog" aria-modal="false" aria-labelledby="pl-tag" aria-hidden="true" tabindex="-1">
+  <div class="pl-hd"><b id="pl-tag"></b><span id="pl-ctx"></span><button type="button" class="pl-x" id="plX" aria-label="Close"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.3"/></svg></button></div>
+  <div class="pl-body"><figure class="pl-fig"><div class="pl-frame" id="pl-frame"></div><figcaption id="pl-cap"></figcaption></figure><dl class="pl-meta" id="pl-meta"></dl></div>
+  <div class="pl-ft"><span class="pl-pg"><button type="button" data-step="-1" aria-label="Previous">‹</button><span id="pl-n"></span><button type="button" data-step="1" aria-label="Next">›</button></span><a id="pl-full" target="_blank" rel="noopener">Full size ↗</a></div>
+</aside>
+<svg class="leader" id="leader" aria-hidden="true"><path id="ld-p"/><circle class="rg" id="ld-r" r="9"/><circle class="pt" id="ld-c" r="3.5"/></svg>
+
 <div class="pscrim" id="pscrim" aria-hidden="true"></div>
 <article class="sheet" id="sheet" aria-label="Solution details" aria-hidden="true"></article>
 
+<script src="img/manifest.js"></script>
 <script>
 (function(){
   'use strict';
@@ -1370,6 +1476,7 @@ html.lean .pw-view::before{display:none}
   }
   function openProduct(slug,{push=true,from=null}={}){
     const p=BY[slug]; if(!p) return;
+    closePlate({focusBack:false});
     const first=!prod; prod=p; if(from) opener=from;
     sheet.innerHTML=sheetHTML(p); sheet.scrollTop=0; manual=null; delete sheet.dataset.f;
     document.body.classList.add('prod'); sheet.setAttribute('aria-hidden','false');
@@ -1459,7 +1566,7 @@ html.lean .pw-view::before{display:none}
       requestAnimationFrame(step);
     })(last);
   }
-  addEventListener('keydown',e=>{ if(e.key!=='Escape') return; if(pOpen) setPanel(null); else if(prod&&!e.target.closest('#cta')) closeProduct(); });
+  addEventListener('keydown',e=>{ if(e.key!=='Escape') return; if(pOpen) setPanel(null); else if(pl) closePlate(); else if(prod&&!e.target.closest('#cta')) closeProduct(); });
 
   /* ---------- compact top bar: Menu and Quote pull down full screen. The menu is built from the rail's own list
      (Solutions lists the products themselves); the quote panel holds the rail's form, moved over while the layout is compact */
@@ -1501,6 +1608,125 @@ html.lean .pw-view::before{display:none}
   addEventListener('popstate',()=>{ const s=location.hash.slice(1); if(BY[s]) openProduct(s,{push:false}); else closeProduct({push:false}); });
   prodOpen=()=>!!prod;
 
+  /* ---------- evidence: stage strips, the certification register and the plate they open (data: img/manifest.js) */
+  const IMG=window.MX_IMG||{photos:[],certs:[],byId:{}};
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+  /* plates per stage: EV <stage>-<letter>, or <system letter + n> in Systems (P power, K cooling, C compute, S safety) */
+  const EV={1:[['A','rb-cad-cutaway'],['B','rb-cad-systems']],
+    2:[['A','rb-frame-steel'],['B','p73221-4-bare-frame'],['C','rb-cad-frame-racks']],
+    3:[['A','rb-glands-cabled'],['B','p12892-1-cable-sleeves'],['C','rb-cad-envelope'],['D','p77312-5-wrapped-on-site']],
+    4:[['P1','rb-power-switchboards'],['P2','p12892-4-lv-switchboard'],['K1','p77312-1-chw-headers'],['K2','p12892-3-chw-flanges'],['C1','rb-it-racks'],['C2','p12892-2-rack-row'],['S1','p32132-4-fire-panels']],
+    5:[['A','rb-transport-crane'],['B','p77312-2-crane-lift'],['C','p73221-5-lift-to-plinths']],
+    6:[['A','rb-live-deployed']]};
+  const STAGE_EL=['s-design','s-frame','s-envelope','s-systems','s-transport','s-live'];
+  const AN_NAME={module:'The module',zones:'Zone plan · Z1–Z4',steel:'Welded space frame',iso:'Frame and ISO corners',panel:'Wall panels',roof:'Roof',glands:'Gland plate · Z4',
+    teg:'Power room · switchboards',chiller:'Chiller bay · Z1',chw:'Chilled-water headers',rack:'IT hall · racks',vesda:'Detection and alarm',lift:'Top ISO corners'};
+  const GRP={ms:['Management systems','SRAC CERT · IAF, IQNet','Five management systems, recertified in April 2024 and valid to April 2027.'],
+    va:['Vendor accreditations','Schneider Electric · R&amp;M','Partner status with the makers of the power, cooling and cabling we fit.'],
+    rl:['Regulatory licences','ANRE · AGFR','The two trade licences a module fit-out needs in Romania: low-voltage electrical work and F-gas handling.']};
+  const chipsOf=p=>(p.chips||[]).map(c=>chip(c[0],c[1])).join(' ');
+  const siteChip=c=>chip('A20','A20: the current site gives '+c.site+'; this row follows the scan');
+  const validCell=c=>/^\d{1,2} \w{3} \d{4}$/.test(c.valid)?['Valid to',c.valid.replace(/^\d+ /,'')]:/^unlimited/.test(c.valid)?['Valid','No expiry']:['Issued',c.first.replace(/^\d+ /,'')];
+
+  const evSets={};
+  for(const st in EV){
+    const sub=$(STAGE_EL[st-1]); if(!sub) continue;
+    const items=evSets[st]=EV[st].map(([k,id])=>({tag:'EV '+pad2(st)+'-'+k,ctx:'Stage '+pad2(st)+' · '+SN[st],p:IMG.byId[id],owner:sub})).filter(x=>x.p);
+    if(!items.length) continue;
+    const box=document.createElement('div'); box.className='evs'; box.dataset.st=st;
+    box.innerHTML=`<div class="evs-hd"><span>Evidence · EV ${pad2(st)}</span><span>${items.length} ${items.length>1?'plates':'plate'}</span></div><ol>${items.map((it,i)=>
+      `<li><button type="button" class="ev" data-i="${i}" aria-controls="plate" aria-label="${it.tag}: ${esc(it.p.cap)}"><img src="img/ev/${it.p.id}-s.webp" alt="" loading="lazy" decoding="async"><span class="tg">${it.tag}</span></button></li>`).join('')}</ol>`;
+    sub.appendChild(box);
+  }
+  const certItems=IMG.certs.map((c,i)=>({tag:'C-'+pad2(i+1),ctx:'Certification · '+GRP[c.grp][0].replace('&amp;','&'),p:c,owner:$('certs')}));
+  $('reg').innerHTML=Object.keys(GRP).map(g=>`<section class="reg-g"><h4>${GRP[g][0]}<small>${GRP[g][1]}</small></h4><p>${GRP[g][2]}</p><ol>${certItems.map((it,i)=>{
+    const c=it.p; if(c.grp!==g) return ''; const [vl,vv]=validCell(c);
+    return `<li><button type="button" class="crt" data-i="${i}" aria-controls="plate"><span class="th${c.file?'':' wh'}">${c.file?`<img src="${c.file}-s.webp" alt="" loading="lazy" decoding="async">`:''}</span>`+
+      `<span class="dn"><b>${c.name}</b>${c.topic}</span><span class="dm">${c.issuer}${c.no!=='—'?' · No. '+c.no:''} ${siteChip(c)}${c.withheld?' '+chip('A21','A21: the scan carries an engineer’s name, date of birth and CNP; not republished'):''}</span>`+
+      `<span class="dv"><span>${vl}</span>${vv}</span></button></li>`;}).join('')}</ol></section>`).join('');
+
+  const plate=$('plate'), leader=$('leader'), plFrame=$('pl-frame'), ldP=$('ld-p'), ldC=$('ld-c'), ldR=$('ld-r');
+  let pl=null; /* { items, i, btns }: the set being paged through and the buttons that open it */
+  function plateShow(){
+    const it=pl.items[pl.i], p=it.p, isDoc=p.kind==='doc', file=isDoc?p.file:'img/ev/'+p.id;
+    plate.className='plate open'+(p.sys?' '+p.sys:''); leader.setAttribute('class','leader'+(p.sys?' '+p.sys:''));
+    $('pl-tag').textContent=it.tag; $('pl-ctx').textContent=it.ctx;
+    plFrame.className='pl-frame'+(isDoc&&file?' scan':'');
+    plFrame.style.setProperty('--ar',p.w?p.w+'/'+p.h:/^se-/.test(p.id)?'1400/995':'1/1.414');
+    plFrame.innerHTML=file?`<img src="${file}.webp" alt="${esc(p.alt||p.name+' certificate, '+p.std+', '+p.issuer)}">`
+      :`<div class="wh"><b>Scan withheld</b>It names an engineer, with their date of birth and personal ID number.</div>`;
+    const full=$('pl-full'); full.hidden=!file; if(file) full.href=file+'.webp';
+    $('pl-cap').innerHTML=isDoc?`<b>${p.name}</b> · ${p.topic}`:esc(p.cap);
+    const row=(k,v)=>`<dt>${k}</dt><dd>${v}</dd>`;
+    $('pl-meta').innerHTML=isDoc
+      ? row('Holder',p.holder+' '+chip('A19','A19: held by Synotech Global Services Romania SRL, not Modularix'))+row('Standard',p.std)+
+        row('Issuer',p.issuer+(p.no!=='—'?' · No. '+p.no:''))+row('Issued',p.first+(p.recert?' · recertified '+p.recert:''))+row('Valid',p.valid)+
+        row('Scope',p.scope)+row('Current site',p.site+' '+siteChip(p))+(p.withheld?row('Scan',chip('A21','A21: AGFR scan carries an engineer’s name, date of birth and CNP; not republished')):'')
+      : row('Source',(p.src.startsWith('#')?`Project ${p.src} · Synotech group ${chip('A6','A6: Synotech group projects, shown separately from Modularix')}`:p.src)+' '+chipsOf(p))+
+        row('Shows',AN_NAME[p.anchor]||'—')+row('File',`${p.w} × ${p.h} px`);
+    $('pl-n').textContent=(pl.i+1)+' / '+pl.items.length;
+    pl.btns.forEach((b,i)=>b.classList.toggle('on',i===pl.i));
+  }
+  /* side by side needs room for a plate (~300 px) and the model beside it; below 600 px of exhibition the plate fills it */
+  const PL_SIDE=600;
+  function plateMode(){
+    const full=!!pl&&!isMobile()&&innerWidth-rail.getBoundingClientRect().width-document.querySelector('.railbg').getBoundingClientRect().width<PL_SIDE;
+    doc.classList.toggle('pl-full',full); return full;
+  }
+  function openPlate(items,i,btns){
+    active(); pl={items,i,btns,at:current&&current.el}; plateMode(); plateShow(); plate.setAttribute('aria-hidden','false'); plate.querySelector('.pl-body').scrollTop=0;
+    plate.focus({preventScroll:true});
+  }
+  function closePlate({focusBack=true}={}){
+    if(!pl) return; const back=pl.btns[pl.i], had=plate.contains(document.activeElement);
+    pl.btns.forEach(b=>b.classList.remove('on')); pl=null;
+    plate.classList.remove('open'); plate.setAttribute('aria-hidden','true'); leader.classList.remove('on'); plateMode();
+    if(focusBack&&had&&back) back.focus({preventScroll:true});
+  }
+  document.querySelectorAll('.evs').forEach(box=>box.addEventListener('click',e=>{
+    const b=e.target.closest('.ev'); if(!b) return; const i=+b.dataset.i, btns=[...box.querySelectorAll('.ev')];
+    if(pl&&pl.btns===btns||pl&&pl.btns[0]===btns[0]&&pl.i===i){ closePlate(); return; }
+    openPlate(evSets[box.dataset.st],i,btns);
+  }));
+  $('reg').addEventListener('click',e=>{
+    const b=e.target.closest('.crt'); if(!b) return; const i=+b.dataset.i, btns=[...$('reg').querySelectorAll('.crt')];
+    if(pl&&pl.btns[0]===btns[0]&&pl.i===i){ closePlate(); return; }
+    openPlate(certItems,i,btns);
+  });
+  const stepPlate=d=>{ if(!pl) return; pl.i=(pl.i+d+pl.items.length)%pl.items.length; plateShow(); };
+  plate.addEventListener('click',e=>{ const s=e.target.closest('[data-step]'); if(s) stepPlate(+s.dataset.step); });
+  plate.addEventListener('keydown',e=>{ if(e.key==='ArrowRight') stepPlate(1); else if(e.key==='ArrowLeft') stepPlate(-1); });
+  /* a wheel over the plate scrolls its body while it can, then the page (which drives the build, and closes the plate) */
+  const plBody=plate.querySelector('.pl-body');
+  plate.addEventListener('wheel',e=>{
+    if(isMobile()) return; const d=e.deltaMode===1?e.deltaY*16:e.deltaY;
+    const can=plBody.contains(e.target)&&(d>0?plBody.scrollTop+plBody.clientHeight<plBody.scrollHeight-1:plBody.scrollTop>0);
+    if(!can){ e.preventDefault(); scrollBy(0,d); }
+  },{passive:false});
+  $('plX').addEventListener('click',()=>closePlate());
+  /* the plate belongs to its stage (or the register): scrolling it out of the middle of the screen closes it */
+  /* "leaving" = the nav's active section moves off the one the plate was opened in, or its stage leaves the screen */
+  const plateOwnerGone=()=>{
+    if(!pl) return; active();
+    const r=pl.items[pl.i].owner.getBoundingClientRect();
+    if(current&&pl.at&&current.el!==pl.at||r.bottom<0||r.top>innerHeight) closePlate();
+  };
+  addEventListener('scroll',plateOwnerGone,{passive:true});
+  /* a resize reflows the page without a scroll event: close the plate if its stage moved away, else re-pick side-by-side
+     or full for the new exhibition width (reading the rects lays the page out at the new size, so no frame wait) */
+  addEventListener('resize',()=>{ plateOwnerGone(); if(pl) plateMode(); });
+  /* leader: from the plate's right edge, level with the photo's middle, out and across to the pin */
+  function drawLeader(){
+    const p=pl&&!isMobile()&&!doc.classList.contains('pl-full')&&MX.anchorAt&&pl.items[pl.i].p, a=p&&p.anchor&&MX.anchorAt(p.anchor);
+    if(!a){ leader.classList.remove('on'); return; }
+    const cv=$('gl').getBoundingClientRect(), pr=plate.getBoundingClientRect(), fr=plFrame.getBoundingClientRect();
+    const ax=cv.left+a.x, ay=cv.top+a.y, sx=pr.right, sy=clamp(fr.top+fr.height/2,pr.top+40,pr.bottom-40);
+    if(ax<sx+30||ax>innerWidth-8||ay<8||ay>innerHeight-8){ leader.classList.remove('on'); return; }
+    ldP.setAttribute('d',`M${sx.toFixed(1)} ${sy.toFixed(1)} H${(sx+18).toFixed(1)} L${ax.toFixed(1)} ${ay.toFixed(1)}`);
+    for(const c of [ldC,ldR]){ c.setAttribute('cx',ax.toFixed(1)); c.setAttribute('cy',ay.toFixed(1)); }
+    leader.classList.add('on');
+  }
+
   /* ---------- camera framing: centre the module in the exhibition rail */
   let cx=innerWidth/2, cy=innerHeight/2, sc=1;
   const rlRow=$('t-reel'), rlTicks=[...document.querySelectorAll('#t-rseg i')];
@@ -1531,6 +1757,8 @@ html.lean .pw-view::before{display:none}
     let tx=W/2+(isMobile()?0:lerp(W*.12,(nav+content)/2,smooth(R))), ty=H/2, ts=lerp(1,fit,smooth(R));
     const pv=prod&&!isMobile()&&sheet.querySelector('.pw-view');
     if(pv){ const r=pv.getBoundingClientRect(); tx=(r.left+r.right)/2; ty=(r.top+r.bottom)/2; ts=Math.min(clamp(r.width/(W*.6),.5,1),clamp(r.width/r.height/.8,.45,1)); }
+    /* an open plate takes the exhibition's left part: the module moves into what is left and scales to it */
+    else if(pl&&!isMobile()&&!doc.classList.contains('pl-full')){ const r=plate.getBoundingClientRect(), av=W-r.right; tx=r.right+av/2; ts*=clamp(av/Math.max(1,W-nav-content),.5,1); }
     /* phones: centre the module in the visible part of the clipped canvas and scale it with it, in step with the scroll */
     if(isMobile()&&!pv){ /* on the first screen the module sits high, clear of the hero copy */
       const vis=bandEl.getBoundingClientRect().height, ex=+getComputedStyle(doc).getPropertyValue('--ex')||0;
@@ -1538,6 +1766,7 @@ html.lean .pw-view::before{display:none}
     else { cx=lerp(cx,tx,.12); cy=lerp(cy,ty,.12); sc=lerp(sc,ts,.12); }
     const fw=W*sc, fh=H*sc;
     cam.setViewOffset(fw,fh,fw/2-cx,fh/2-cy,W,H);
+    drawLeader();
   }
 
   function onScroll(){reveal();active();}
@@ -1549,7 +1778,7 @@ html.lean .pw-view::before{display:none}
   { const s=location.hash.slice(1); if(BY[s]) openProduct(s,{push:false}); }
 
   /* ---------- 3D engine (from the Dictum Labs prototype) */
-  MX.loadScripts(['vendor/three.global.min.js','engine/gl-kit.js?v=11','engine/container-model.js?v=11','engine/world-home.js?v=12'])
+  MX.loadScripts(['vendor/three.global.min.js','engine/gl-kit.js?v=11','engine/container-model.js?v=11','engine/world-home.js?v=13'])
     .catch(err=>{
       console.error(err); doc.classList.add('no-gl');
       const n=document.getElementById('glnote'); n.hidden=false; n.textContent='3D scene unavailable: a script failed to load ('+(err&&err.target&&err.target.src||err)+')';

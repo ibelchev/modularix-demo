@@ -193,6 +193,23 @@
   add(scene, [22, 3.6, 0], '<b>+120 kW</b>Module 02', 'it', 6.5, 6.6, 6.85, 6.95, 30);
   add(scene, [44, 3.6, -8], '<b>×9</b>1.08 MW campus', 'it', 6.62, 6.72, 6.85, 6.95, 30);
 
+  /* evidence anchors: the page pins a photo to the part of the module it shows. MX.anchorAt(key) → screen px
+     in the canvas (view offset included), or null when the point is behind the camera */
+  const AN = {
+    module: [mod, [0, D.H, 0]], zones: [Ly.floor.group, F.zoneIT], steel: [Ly.frame.group, Ly.frame.a.steel], iso: [Ly.frame.group, Ly.frame.a.iso],
+    panel: [Ly.wallNear.group, Ly.wallNear.a.panel], roof: [Ly.roof.group, Ly.roof.a.roof], glands: [Ly.endB.group, Ly.endB.a.glands],
+    teg: [Ly.power.group, Ly.power.a.teg], chiller: [Ly.cooling.group, Ly.cooling.a.chiller], chw: [Ly.cooling.group, Ly.cooling.a.chw],
+    rack: [Ly.it.group, Ly.it.a.rack], vesda: [Ly.safety.group, Ly.safety.a.vesda], lift: [mod, [D.X1 - .08, D.H, D.Z1 - .09]]
+  };
+  const vA = new THREE.Vector3();
+  MX.anchorAt = k => {
+    const a = AN[k]; if (!a) return null;
+    vA.fromArray(a[1]); a[0].localToWorld(vA); vA.project(camera);
+    if (vA.z > 1) return null;
+    const el = ctx.renderer.domElement, w = el.clientWidth || innerWidth, h = el.clientHeight || innerHeight;
+    return { x: (vA.x * .5 + .5) * w, y: (-vA.y * .5 + .5) * h };
+  };
+
   /* ------------------------------------------------------------ camera */
   // camera path as orbit parameters: target, azimuth (deg, from +z towards +x), elevation (deg), distance, fov
   const K_ = (t, l, az, el, d, fov = 34) => { const A = az * Math.PI / 180, E = el * Math.PI / 180; return { t, l, fov, p: [l[0] + d * Math.cos(E) * Math.sin(A), l[1] + d * Math.sin(E), l[2] + d * Math.cos(E) * Math.cos(A)] }; };
