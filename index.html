@@ -128,25 +128,53 @@ body.gl-ready #gl{opacity:1}
 .deco .seg i{height:4px}
 .deco .sim{font-size:8px;border:1px solid var(--line2);padding:1px 4px;color:#8fb2da}
 .navrail:has(.cta.open) .deco{display:none}
-/* CTA, expanding into the form */
-.cta{padding:0 22px 24px;display:flex;flex-direction:column}
+/* CTA, expanding into the form: open, the panel spans the full rail width down to the screen's foot (top rule only),
+   and the CTA's slot turns into the submit button */
+.cta{padding:0 22px 24px;display:flex;flex-direction:column;border-top:1px solid transparent;
+  transition:background-color .35s var(--ease),border-color .35s var(--ease)}
+.cta.open{background:rgba(3,12,32,.92);border-top-color:var(--line3)}
 .cta .form{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s var(--ease)}
 .cta .form > div{overflow:hidden}
 .cta.open .form{grid-template-rows:1fr}
-.cta form{display:grid;gap:10px;padding:16px;margin-bottom:10px;background:rgba(3,12,32,.92);border:1px solid var(--line2)}
-.cta label{display:grid;gap:4px;font:400 10px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
-.cta input,.cta select,.cta textarea{font:400 15px var(--body);color:var(--ink);background:#06142f;border:1px solid var(--line2);padding:8px 10px;border-radius:0;width:100%;box-sizing:border-box}
-.cta textarea{min-height:70px;resize:vertical}
-.cta .more{display:none;gap:10px}
-.cta.details .more{display:grid}
-.cta .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.cta .fhd{display:flex;justify-content:space-between;align-items:center;padding:14px 0 0;
+  font:400 10px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:#8fb2da}
+.cta .x{display:grid;place-items:center;width:28px;height:28px;margin-right:-7px;background:none;border:0;padding:0;color:var(--dim);cursor:pointer}
+.cta .x:hover{color:#fff}
+.cta .x svg{width:12px;height:12px}
+.cta form{display:grid;gap:6px;padding:0 0 18px}
+/* field: an underline with a notch at each end, like a meter scale; the label sits inside and floats up once there's a value */
+.fld{position:relative}
+.fld::after{content:"";position:absolute;left:0;right:0;bottom:0;height:7px;border:1px solid var(--line3);border-top:0;pointer-events:none;transition:border-color .25s}
+.fld::before{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--blue2);transform-origin:left;transform:scaleX(0);transition:transform .45s var(--ease)}
+.fld:focus-within::before{transform:none}
+.fld:focus-within::after{border-color:var(--blue2)}
+.fld label{position:absolute;left:8px;top:20px;max-width:calc(100% - 16px);font:400 11.5px/22px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--faint);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;pointer-events:none;transform-origin:left top;transition:transform .25s var(--ease),color .25s}
+.fld :focus + label,.fld :not(:placeholder-shown) + label,.fld select + label{transform:translateY(-15px) scale(.8);max-width:calc((100% - 16px) * 1.25);color:#8fb2da}
+.fld :focus + label{color:var(--blue2)}
+.cta input,.cta select,.cta textarea{display:block;width:100%;box-sizing:border-box;margin:0;font:400 15px/22px var(--body);color:var(--ink);
+  background:transparent;border:0;border-radius:0;padding:20px 8px 6px;outline:0}
+.cta input:-webkit-autofill{-webkit-box-shadow:0 0 0 40px #06142f inset;-webkit-text-fill-color:var(--ink)}
+.cta select{appearance:none;-webkit-appearance:none;padding-right:26px;cursor:pointer;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%238fb2da' stroke-width='1.2'/%3E%3C/svg%3E") no-repeat right 9px top 29px}
+.cta option{background:#06142f;color:var(--ink)}
+/* details: one line until it's clicked into (or holds text), then four */
+.cta textarea{height:48px;resize:none;overflow:hidden;transition:height .3s var(--ease)}
+.cta textarea:focus,.cta textarea:not(:placeholder-shown){height:114px;overflow:auto}
 .linkbtn{background:none;border:0;padding:0;color:var(--blue2);font:400 13px var(--body);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
-.send{font:600 14px var(--hd);background:var(--ink);color:#061430;border:0;padding:9px 14px;cursor:pointer}
-.cta .done{font-size:13.5px;color:var(--dim);line-height:1.45}
+.cta .done{font-size:12px;color:var(--faint);line-height:1.45}
 .ctabtn{display:flex;justify-content:space-between;align-items:center;font:600 16px var(--hd);background:var(--blue);color:#03112b;border:0;padding:14px 16px;cursor:pointer;text-align:left}
-.ctabtn::after{content:"↑";font-weight:500;transition:transform .3s}
-.cta:not(.open) .ctabtn::after{content:"→"}
-.cta .fnote{font:400 12px/1.45 var(--body);color:#9db6d3}
+.ctabtn::after{content:"→";font-weight:500;transition:transform .3s}
+/* one slot, two buttons: the CTA closed, Send open (ink instead of blue), cross-faded in place */
+.cta .slot{display:grid}
+.cta .slot > *{grid-area:1/1;transition:opacity .3s var(--ease),visibility 0s}
+.cta .send{background:var(--ink);color:#061430}
+/* sent: the slot holds a plain confirmation, not a button; green is the system's status colour (--ok, as in telemetry) */
+.cta.done .fnote{color:#fff}
+.cta .sent{display:flex;align-items:center;gap:10px;margin:0;padding:14px 0;font:600 16px var(--hd);color:var(--ink)}
+.cta .sent svg{flex:none;width:22px;height:22px;color:var(--ok)}
+.cta.open #ctaBtn,.cta:not(.open) .send,.cta.done .send,.cta:not(.open.done) .sent{opacity:0;visibility:hidden;transition:opacity .3s var(--ease),visibility 0s .3s}
+.cta .fnote{font:400 12px/1.45 var(--body);color:#9db6d3;margin:2px 0 6px}
 
 /* ---------- exhibition overlay: drawing-sheet frame, telemetry, title block */
 .exh{position:fixed;top:0;bottom:0;right:0;left:calc(var(--nav) + var(--content));z-index:1;pointer-events:none;
@@ -235,19 +263,44 @@ body.reel .exh .tele{opacity:1}
 
 .band,.mlogo{display:none}
 
-/* ---------- product drill-down: the sheet takes over the content rail; main is hidden but keeps its scroll position */
-main{transition:opacity .3s var(--ease)}
+/* ---------- product drill-down: a window over the page. It opens from halfway across the solution cards and leaves 2 rem
+   all round; the page stays put behind a dim (the window's own spread shadow), the nav stays live. The window scrolls as one;
+   its text column is solid, its right column is clear glass over the same 3D scene, which the camera frames into it. */
 body.prod{overflow:hidden}
-body.prod main{opacity:0;visibility:hidden}
-.sheet{position:fixed;top:0;bottom:0;left:var(--nav);width:var(--content);z-index:3;box-sizing:border-box;overflow-y:auto;overscroll-behavior:contain;
-  padding:0 var(--pad) 10vh;opacity:0;visibility:hidden;transform:translateY(14px);
-  transition:opacity .35s var(--ease),transform .35s var(--ease),visibility 0s .35s;scrollbar-width:thin;scrollbar-color:var(--line2) transparent}
-body.prod .sheet{opacity:1;visibility:visible;transform:none;transition:opacity .45s var(--ease) .12s,transform .45s var(--ease) .12s}
-.sh-top{position:sticky;top:0;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 calc(var(--pad) * -1);
-  padding:calc(18px + env(safe-area-inset-top,0px)) var(--pad) 14px;background:#050d24;border-bottom:1px solid var(--line)}
+.pscrim{position:fixed;inset:0;z-index:4;display:none}
+body.prod .pscrim{display:block}
+.sheet{--tb:62px;--sh-bg:#0a1a3e;position:fixed;top:2rem;bottom:2rem;right:2rem;z-index:4;box-sizing:border-box;
+  left:calc(var(--nav) + 2rem);
+  overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--line3) transparent;
+  border:1px solid var(--line3);box-shadow:0 0 0 100vmax rgba(3,7,18,.66),0 40px 90px rgba(0,0,0,.7);
+  opacity:0;visibility:hidden;transform:scale(.985);transform-origin:30% 50%;
+  transition:opacity .3s var(--ease),transform .3s var(--ease),visibility 0s .3s}
+body.prod .sheet{opacity:1;visibility:visible;transform:none;transition:opacity .4s var(--ease),transform .45s var(--ease)}
+.sh-top{position:sticky;top:0;z-index:2;height:var(--tb);box-sizing:border-box;display:flex;justify-content:space-between;align-items:center;gap:12px;
+  padding:0 16px 0 var(--pad);background:var(--sh-bg);border-bottom:1px solid var(--line2)}
+/* how far through the window you are */
+.sh-top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--blue2);transform-origin:left;transform:scaleX(var(--sp,0))}
+.pw{display:grid;grid-template-columns:clamp(360px,42%,540px) 1fr;align-items:start}
+.pw-text{position:relative;padding:0 var(--pad);background:rgba(7,18,44,.95);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-right:1px solid var(--line2);min-height:calc(100% - var(--tb))}
+.pw-text > .sh-sec:last-of-type{padding-bottom:12vh}
+/* the clear pane: sticks while the text scrolls; the camera centres the module in it */
+.pw-view{position:sticky;top:var(--tb);height:calc(100vh - 4rem - 2px - var(--tb));pointer-events:none}
+.pw-view::before{content:"";position:absolute;inset:14px;border:1px dashed rgba(150,190,240,.14)}
+.pw-hint{position:absolute;top:24px;left:26px;font:400 10px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--faint);transition:opacity .3s}
+/* more below: a fade at the foot of the text column, gone once the end is reached */
+.sh-more{position:sticky;bottom:0;display:flex;justify-content:center;align-items:flex-end;height:88px;margin:-88px calc(var(--pad) * -1) 0;padding-bottom:14px;pointer-events:none;
+  background:linear-gradient(to bottom,transparent,rgba(7,18,44,.98) 78%);font:400 10px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--faint);transition:opacity .25s}
+.sheet.end .sh-more{opacity:0}
+body.prod .exh{opacity:0;transition:opacity .3s}
 .back{background:none;border:0;padding:4px 0;color:var(--ink);font:500 14px var(--hd);cursor:pointer}
 .back:hover{color:var(--blue2)}
-.sh-pg{display:flex;align-items:center;gap:6px;font:400 10.5px var(--mono);letter-spacing:.12em;color:var(--faint);font-variant-numeric:tabular-nums}
+/* breadcrumb: one mono line, only the current product in white */
+.sh-crumbs{display:flex;align-items:baseline;gap:6px;min-width:0;font:400 10.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+.sh-crumbs .back{font:inherit;letter-spacing:inherit;text-transform:inherit;color:inherit;margin:0}
+.sh-crumbs .back:hover{color:var(--blue2)}
+.sh-crumbs .cur{color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sh-x{margin-left:8px}
+.sh-pg{display:flex;align-items:center;gap:6px;white-space:nowrap;font:400 10.5px var(--mono);letter-spacing:.12em;color:var(--faint);font-variant-numeric:tabular-nums}
 .sh-pg button{width:30px;height:30px;background:none;border:1px solid var(--line2);color:var(--ink);font:400 16px/1 var(--hd);cursor:pointer}
 .sh-pg button:hover{border-color:var(--blue2);color:var(--blue2)}
 .sh-head{padding-top:44px}
@@ -275,7 +328,9 @@ body.prod .sheet{opacity:1;visibility:visible;transform:none;transition:opacity 
 .ly.on{box-shadow:inset 3px 0 0 var(--blue);padding-left:12px}
 .ld{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s var(--ease)}
 .ld > div{overflow:hidden}
-.ly.on + .ld{grid-template-rows:1fr}
+.ly.on + .ld,.lys .ld{grid-template-rows:1fr}
+.lys > li{opacity:.5;transition:opacity .3s}
+.lys > li.on{opacity:1}
 .ld ul{margin:0;padding:0 0 14px 44px;list-style:none;display:grid;gap:5px}
 .ld li{font-size:14px;color:var(--dim);position:relative}
 .ld li::before{content:"";position:absolute;left:-14px;top:.7em;width:6px;height:1px;background:var(--blue2)}
@@ -301,19 +356,19 @@ body.prod .sheet{opacity:1;visibility:visible;transform:none;transition:opacity 
 .ghost:hover{border-color:var(--ink)}
 .sh-contact{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:16px;font:400 12px var(--mono);letter-spacing:.06em;color:var(--dim);user-select:all}
 .sheet .sol a{cursor:pointer}
-/* nav: product list replaces Modules / Add-ons while a sheet is open */
+/* nav: while a sheet is open, each group lists its products one level in; Modules / Add-ons stay put */
 .nav .pi{display:none}
 body.prod .nav .pi{display:block}
-body.prod .nav .ch[data-ch="solutions"] li.base{display:none}
-.pi a{gap:8px}
+.pi a{gap:8px;padding-right:36px;font-size:12.5px}
 .pi a .pid{font:400 9.5px var(--mono);letter-spacing:.1em;color:#6f8fb8}
-/* exhibition callout for the open product */
-.pcall{position:absolute;left:22px;bottom:22px;width:min(300px,calc(100% - 330px));min-width:200px;box-sizing:border-box;padding:12px 14px 14px;background:var(--panel);border:1px solid var(--line2);border-left:2px solid var(--blue);
+.pi a.on .pid{color:#a9c4e6}
+body.prod .nav li.base a.grp{color:#fff}
+/* callout for the open product, bottom-left of the clear pane */
+.pcall{position:absolute;left:26px;bottom:26px;width:min(300px,calc(100% - 52px));box-sizing:border-box;padding:12px 14px 14px;background:var(--panel);border:1px solid var(--line2);border-left:2px solid var(--blue);
   -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);display:grid;gap:6px;opacity:0;transform:translateY(8px);transition:opacity .4s var(--ease),transform .4s var(--ease)}
 body.prod .pcall{opacity:1;transform:none}
 .pcall #pc-l{color:var(--blue2)}
 .pcall #pc-h{font:500 15px/1.3 var(--hd);letter-spacing:0;text-transform:none;color:var(--ink)}
-body.prod .ruler{opacity:.35}
 
 /* ---------- content */
 main{position:relative;z-index:3}
@@ -495,17 +550,49 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
   .col{padding-left:max(22px,env(safe-area-inset-left,0px))}
   .sub{scroll-margin-top:calc(var(--band) + 24px)}
   .ch-sec{padding-top:12vh}
-  .sheet{left:0;width:100%;top:var(--band);padding-left:max(22px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));--pad:max(16px,env(safe-area-inset-left,0px))}
-  .sh-top{padding-top:12px;margin-left:calc(max(22px,env(safe-area-inset-left,0px)) * -1);padding-left:max(22px,env(safe-area-inset-left,0px))}
+  .sheet{left:0;right:0;bottom:0;top:var(--band);border:0;box-shadow:none;background:var(--bg);--pad:max(22px,env(safe-area-inset-left,0px))}
+  .sh-top{padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .sh-crumbs > :nth-child(-n+2){display:none} /* phones: Modules / name only */
+  .pw{display:block}
+  .pw-text{border:0;padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .pw-view{display:none}
   .tdl{grid-template-columns:1fr}
 }
 @media (prefers-reduced-motion:reduce){
-  .marker,.subs,.cta .form,.navrail,.sheet,.ld,.pcall,main,.bar i,.racks .rc i,.ch-sec > .col > header::after{transition:none}
+  .marker,.subs,.cta,.cta .form,.cta textarea,.fld::before,.fld label,.cta .slot > *,.navrail,.sheet,.ld,.pcall,main,.bar i,.racks .rc i,.ch-sec > .col > header::after{transition:none}
   .ch-sec > .col > header::after{transform:none}
   .live::before{animation:none}
   .navrail::before,.railbg,.nav{transform:none!important}
   .navrail::before{opacity:calc(var(--r) * var(--navA))}.railbg{opacity:var(--r2)}
 }
+
+/* ---------- lean mode (html.lean): the same page with the decoration layer stripped. No layout changes: rulers, ticks,
+   pulses, leaders, brackets and the drawing-sheet furniture go; plain hairlines stay where a rule separates content.
+   Experimental: ?lean in the URL turns it on; clicking the telemetry panel toggles it */
+html.lean .railbg::after,html.lean .railbg::before{display:none}
+html.lean .navrail::after{animation:none;background:var(--line2)}
+html.lean .ch > a .no{visibility:hidden}
+html.lean .exh .cnr,html.lean .exh .xh,html.lean .exh .ruler,html.lean .exh .tblock{display:none}
+html.lean .live::before{animation:none}
+/* telemetry: readings only, no sparklines, rack cells or meters; a quiet panel without the blue cap */
+html.lean .tele{border-top-width:1px;border-color:var(--line);gap:6px}
+html.lean .tele .spark,html.lean .tele .racks,html.lean .tele .bar,html.lean .tele .seg{display:none}
+html.lean .tele .tg{border-block-color:transparent;padding-block:4px}
+/* nav foot: the mini telemetry repeats the exhibition panel, so it goes */
+html.lean .deco{visibility:hidden}
+html.lean .ch-sec > .col > header::after{background:linear-gradient(var(--line2),var(--line2)) left bottom/100% 1px no-repeat}
+html.lean .stats div{background:#071433}
+/* meters go: bars, segments, ranges, gauges, needles and the line drawings (rulers, air flow, skyline) */
+html.lean .mt{display:none}
+html.lean .specs dd:has(.mt-n){padding-right:0}
+html.lean .fld::after{border-left:0;border-right:0}
+html.lean .lbl .pin{box-shadow:0 0 0 3px rgba(5,10,20,.7)}
+html.lean .lbl .tag{border-color:transparent;border-left-color:currentColor}
+html.lean .lbl.l .tag{border-left-color:transparent;border-right-color:currentColor}
+html.lean .pw-view::before{display:none}
+/* test hook: the telemetry panel takes clicks, so its overlay sits above main (still click-through elsewhere, still under the sheet) */
+.exh{z-index:4}
+.exh .tele{pointer-events:auto;cursor:pointer}
 </style>
 
 <canvas id="gl" aria-hidden="true"></canvas>
@@ -537,9 +624,6 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
     <div class="tr"><span>Build<b id="t-bpct">0%</b></span><span id="t-stage">Queued</span>
       <div class="seg" id="t-seg"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
   </div>
-  </div>
-
-  <div class="pcall" id="pcall"><span id="pc-p">—</span><span id="pc-l">Exploded view · six layers</span><span id="pc-h">Select a layer to zoom in.</span></div>
 
   <div class="tblock">
     <div><span>Dwg</span><em>MX-WEB-D2</em></div>
@@ -555,9 +639,9 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
   <nav class="nav" aria-label="Sections">
     <ol>
       <li class="ch" data-ch="overview"><a href="#overview" data-to="what"><span class="no">00</span>Overview</a>
-        <div class="subs"><ol><li><a href="#what">What it is</a></li><li><a href="#why">Why modular</a></li><li><a href="#who">Who it's for</a></li></ol></div></li>
+        <div class="subs"><ol><li><a href="#what">What is Modularix</a></li><li><a href="#why">Why modular</a></li><li><a href="#who">Who it's for</a></li></ol></div></li>
       <li class="ch" data-ch="solutions"><a href="#solutions"><span class="no">01</span>Solutions</a>
-        <div class="subs"><ol><li class="base"><a href="#modules">Modules</a></li><li class="base"><a href="#addons">Add-ons</a></li><li class="pi"><a href="#legacy" data-p="legacy">Legacy<span class="pid">S-01</span></a></li><li class="pi"><a href="#ai-hpc" data-p="ai-hpc">AI &amp; HPC Ready<span class="pid">S-02</span></a></li><li class="pi"><a href="#expandable" data-p="expandable">Expandable<span class="pid">S-03</span></a></li><li class="pi"><a href="#emsec" data-p="emsec">EMSEC Ready<span class="pid">S-04</span></a></li><li class="pi"><a href="#custom" data-p="custom">Custom<span class="pid">S-05</span></a></li><li class="pi"><a href="#skids" data-p="skids">Power &amp; Cooling Skids<span class="pid">S-06</span></a></li><li class="pi"><a href="#power-module" data-p="power-module">Power Module<span class="pid">S-07</span></a></li></ol></div></li>
+        <div class="subs"><ol><li class="base"><a href="#modules">Modules</a></li><li class="pi"><a href="#legacy" data-p="legacy">Legacy<span class="pid">S-01</span></a></li><li class="pi"><a href="#ai-hpc" data-p="ai-hpc">AI &amp; HPC Ready<span class="pid">S-02</span></a></li><li class="pi"><a href="#expandable" data-p="expandable">Expandable<span class="pid">S-03</span></a></li><li class="pi"><a href="#emsec" data-p="emsec">EMSEC Ready<span class="pid">S-04</span></a></li><li class="pi"><a href="#custom" data-p="custom">Custom<span class="pid">S-05</span></a></li><li class="base"><a href="#addons">Add-ons</a></li><li class="pi"><a href="#skids" data-p="skids">Power &amp; Cooling Skids<span class="pid">S-06</span></a></li><li class="pi"><a href="#power-module" data-p="power-module">Power Module<span class="pid">S-07</span></a></li></ol></div></li>
       <li class="ch" data-ch="build"><a href="#build"><span class="no">02</span>How it's built</a>
         <div class="subs"><ol><li><a href="#s-design">Design</a></li><li><a href="#s-frame">Frame</a></li><li><a href="#s-envelope">Envelope</a></li><li><a href="#s-systems">Systems</a></li><li><a href="#s-transport">Transport</a></li><li><a href="#s-live">Live</a></li></ol></div></li>
       <li class="ch" data-ch="proof"><a href="#proof"><span class="no">03</span>Proof</a>
@@ -577,20 +661,22 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
   </div>
   <div class="cta" id="cta">
     <div class="form"><div>
-      <form id="rfq" novalidate>
-        <label for="f-name">Name<input id="f-name" name="name" autocomplete="name" required></label>
-        <label for="f-email">Work email<input id="f-email" name="email" type="email" autocomplete="email" required></label>
-        <label for="f-sol">Solution<select id="f-sol" name="solution">
-          <option>Not sure yet</option><option>Legacy</option><option>AI &amp; HPC Ready</option><option>Expandable</option><option>EMSEC Ready</option><option>Custom</option><option>Power &amp; Cooling Skids</option><option>Power Module</option></select></label>
-        <div class="more">
-          <label for="f-company">Company<input id="f-company" name="company" autocomplete="organization"></label>
-          <label for="f-msg">IT load, site, timeline<textarea id="f-msg" name="message"></textarea></label>
-        </div>
-        <p class="fnote">An engineer replies within one working day. <span class="chk" title="Working assumption A17: response time to confirm with Modularix">A17</span></p>
-        <div class="row"><button type="button" class="linkbtn" id="moreBtn">Add details</button><button type="submit" class="send">Send request</button></div>
+      <div class="fhd"><span id="rfq-h">Request a quote</span><button type="button" class="x" id="xBtn" aria-label="Close the form"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.3"/></svg></button></div>
+      <p class="fnote" id="rfq-n">An engineer replies within one working day. <span class="chk" title="Working assumption A17: response time to confirm with Modularix">A17</span></p>
+      <form id="rfq" novalidate aria-labelledby="rfq-h" aria-describedby="rfq-n">
+        <div class="fld"><input id="f-name" name="name" autocomplete="name" placeholder=" " required><label for="f-name">Name</label></div>
+        <div class="fld"><input id="f-email" name="email" type="email" autocomplete="email" placeholder=" " required><label for="f-email">Work email</label></div>
+        <div class="fld"><select id="f-sol" name="solution">
+          <option>Not sure yet</option><option>Legacy</option><option>AI &amp; HPC Ready</option><option>Expandable</option><option>EMSEC Ready</option><option>Custom</option><option>Power &amp; Cooling Skids</option><option>Power Module</option></select><label for="f-sol">Solution</label></div>
+        <div class="fld"><input id="f-company" name="company" autocomplete="organization" placeholder=" "><label for="f-company">Company</label></div>
+        <div class="fld"><textarea id="f-msg" name="message" rows="1" placeholder=" "></textarea><label for="f-msg">Add details</label></div>
       </form>
     </div></div>
-    <button type="button" class="ctabtn" id="ctaBtn" aria-expanded="false" aria-controls="rfq">Request a quote</button>
+    <div class="slot">
+      <button type="button" class="ctabtn" id="ctaBtn" aria-expanded="false" aria-controls="rfq">Request a quote</button>
+      <button type="submit" form="rfq" class="ctabtn send" id="sendBtn">Send request</button>
+      <p class="sent" role="status"><svg viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="10" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M6.5 11.3l3 3 6-6.3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg><span></span></p>
+    </div>
   </div>
   <span class="marker" id="marker" aria-hidden="true"></span>
 </aside>
@@ -608,8 +694,8 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
   <section class="ch-sec" data-ch="overview">
     <div class="col">
       <div class="sub" id="what" data-t=".18">
-        <p class="eyebrow">About Modularix</p>
-        <h3>Who we are</h3>
+        <p class="eyebrow">About Modularix · Who we are</p>
+        <h3>What is Modularix</h3>
         <p>Modularix is a leading provider of modular data center infrastructure. We design and deploy cutting-edge solutions that help enterprises scale their digital operations with confidence, security, and efficiency.</p>
         <p>Prefabricated, modular and containerised data centers, designed, welded, fitted and tested in our own factory in Romania, then shipped to your site as one piece.</p>
         <div class="stats" id="stats">
@@ -784,6 +870,7 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
   </section>
 </main>
 
+<div class="pscrim" id="pscrim" aria-hidden="true"></div>
 <article class="sheet" id="sheet" aria-label="Solution details" aria-hidden="true"></article>
 
 <script>
@@ -793,6 +880,9 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
   const clamp=(v,a,b)=>Math.min(b,Math.max(a,v)), lerp=(a,b,t)=>a+(b-a)*t, smooth=t=>t*t*(3-2*t), ramp=(T,a,b)=>clamp((T-a)/(b-a),0,1);
   const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(/[?&]review\b/.test(location.search)) document.documentElement.classList.add('review');
+  /* decoration level (experiment): full by default, ?lean starts lean; clicking the telemetry toggles for this visit */
+  if(/[?&]lean\b/.test(location.search)) doc.classList.add('lean');
+  document.getElementById('tele').addEventListener('click',()=>doc.classList.toggle('lean'));
   const isMobile=()=>innerWidth<=900;
   const pad2=n=>String(n).padStart(2,'0');
 
@@ -996,16 +1086,21 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
 
   /* ---------- CTA → form */
   const cta=document.getElementById('cta'), ctaBtn=document.getElementById('ctaBtn'), form=document.getElementById('rfq');
-  ctaBtn.addEventListener('click',()=>{
-    const open=!cta.classList.contains('open');
-    cta.classList.toggle('open',open); ctaBtn.setAttribute('aria-expanded',open); ctaBtn.textContent=open?'Close':'Request a quote';
-    if(open) setTimeout(()=>document.getElementById('f-name').focus({preventScroll:true}),reduced?0:350);
-  });
-  document.getElementById('moreBtn').addEventListener('click',e=>{const on=cta.classList.toggle('details'); e.target.textContent=on?'Fewer fields':'Add details';});
+  const setForm=open=>{
+    cta.classList.toggle('open',open); ctaBtn.setAttribute('aria-expanded',open);
+    if(open) setTimeout(()=>document.getElementById('f-name')?.focus({preventScroll:true}),reduced?0:350);
+    else ctaBtn.focus({preventScroll:true});
+  };
+  ctaBtn.addEventListener('click',()=>setForm(true));
+  document.getElementById('xBtn').addEventListener('click',()=>setForm(false));
+  cta.addEventListener('keydown',e=>{ if(e.key==='Escape'&&cta.classList.contains('open')) setForm(false); });
   form.addEventListener('submit',e=>{
     e.preventDefault();
     if(!form.reportValidity()) return;
     form.innerHTML='<p class="done">Prototype only: this request was not sent. In the live site it goes to sales, and the solution you picked comes with it.</p>';
+    document.getElementById('rfq-n').innerHTML='Thank you for your interest! An engineer will reply within one working day. <span class="chk" title="Working assumption A17: response time to confirm with Modularix">A17</span>';
+    cta.classList.add('done'); cta.querySelector('.sent span').textContent='Request sent';
+    if(cta.contains(document.activeElement)) document.getElementById('xBtn').focus({preventScroll:true});
   });
 
   /* ---------- product drill-down: data from the Content Catalog (old-site copy as-is; chips mark what is being confirmed) */
@@ -1074,17 +1169,17 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
     const i=PRODUCTS.indexOf(p), isAdd=p.fam==='Add-on';
     let layers='';
     if(p.ref){
-      layers=`<section class="sh-sec"><h3>Six layers. One factory. One handover.</h3>
-        <p class="sh-p">Select a layer to separate it from the module and zoom in.</p>
+      layers=`<section class="sh-sec sh-layers"><h3>Six layers. One factory. One handover.</h3>
+        <p class="sh-p">Scroll through the layers, or select one to jump to it.</p>
         <ol class="lys">${LAYERS.map(l=>`<li><button type="button" class="ly" data-l="${l.k}" aria-expanded="false"><span class="lk">${l.k}</span><span class="ln">${l.n}</span><span class="lh">${l.h}</span></button>
           <div class="ld"><div><ul>${l.s.map(s=>`<li>${s}</li>`).join('')}</ul>${l.x?`<p class="lx">${l.x}</p>`:''}</div></div></li>`).join('')}</ol></section>`;
     } else if(!isAdd){
-      layers=`<section class="sh-sec"><h3>Built on the same six layers</h3>
+      layers=`<section class="sh-sec sh-layers"><h3>Built on the same six layers</h3>
         <p class="sh-p">Every module is built like the MX-AI/HPC-120 reference build, sized per project. ${p.diff||''} ${chip('A8','A8: reference build publication and per-product variants to confirm')}</p>
         <div class="lchips">${LAYERS.map(l=>`<button type="button" class="ly mini" data-l="${l.k}" aria-pressed="false"><span class="lk">${l.k}</span>${l.n}</button>`).join('')}</div></section>`;
     } else {
       const ks=p.focus==='PC'?['L3','L4']:['L3'];
-      layers=`<section class="sh-sec"><h3>Where it connects</h3>
+      layers=`<section class="sh-sec sh-layers"><h3>Where it connects</h3>
         <p class="sh-p">Add-ons extend a module's ${p.focus==='PC'?'power and cooling':'power'}, or add capacity to an existing site. ${chip('A3','A3: add-ons are also sold standalone to existing sites')}</p>
         <div class="lchips">${ks.map(k=>`<button type="button" class="ly mini" data-l="${k}" aria-pressed="false"><span class="lk">${k}</span>${LBY[k].n} in the module</button>`).join('')}</div></section>`;
     }
@@ -1098,8 +1193,9 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
         <p class="sh-note">"Tier III Ready" is a design characteristic, not an Uptime Institute certification; formal Tier Certification is available on request.</p></section>`:'';
     const others=p.other.map(s=>{const o=BY[s]; const up=p.up&&p.up[s];
       return `<a href="#${o.slug}" data-p="${o.slug}"><span class="id">${o.id}</span><span class="nm">${o.name}</span><span class="cap">${o.mets[0]}</span><span class="tg">${up||o.tag.replace(/<span class="chk".*?<\/span>/g,'').trim()}</span></a>`;}).join('');
-    return `<div class="sh-top"><button type="button" class="back" data-back>← All solutions</button>
-        <span class="sh-pg"><button type="button" data-step="-1" aria-label="Previous solution">‹</button><span>${p.id.slice(2)} / 07</span><button type="button" data-step="1" aria-label="Next solution">›</button></span></div>
+    return `<div class="sh-top"><nav class="sh-crumbs" aria-label="Breadcrumb"><button type="button" class="back" data-back>← Solutions</button><span class="sep" aria-hidden="true">/</span><button type="button" class="back" data-back>${isAdd?'Add-ons':'Modules'}</button><span class="sep" aria-hidden="true">/</span><span class="cur" aria-current="page">${p.name}</span></nav>
+        <span class="sh-pg"><button type="button" data-step="-1" aria-label="Previous solution">‹</button><span>${p.id.slice(2)} / 07</span><button type="button" data-step="1" aria-label="Next solution">›</button><button type="button" class="sh-x" data-back aria-label="Close solution details">✕</button></span></div>
+      <div class="pw"><div class="pw-text">
       <header class="sh-head"><p class="eyebrow">${p.id} · ${p.fam}</p><h2 tabindex="-1">${p.name}</h2><p class="sh-tag">${p.tag}</p>
         <ul class="mets">${p.mets.map(m=>`<li>${m}</li>`).join('')}</ul></header>
       <p class="sh-intro">${p.intro}</p>
@@ -1112,28 +1208,53 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
         <p class="sh-p">Our engineering team is ready to design the perfect infrastructure for your requirements.</p>
         <div class="sh-btns"><button type="button" class="ctabtn" data-quote>Request a quote</button><button type="button" class="ghost" data-talk>Talk to an engineer</button></div>
         <p class="sh-contact"><span>office@modularix.com</span><span>+40 722 598 251</span></p></section>
-      <section class="sh-sec"><h3>Other solutions</h3><div class="sol">${others}</div></section>`;
+      <section class="sh-sec"><h3>Other solutions</h3><div class="sol">${others}</div></section>
+      <div class="sh-more" aria-hidden="true">Scroll ↓</div></div>
+      <div class="pw-view" aria-hidden="true"><p class="pw-hint">${p.ref?'Scroll to take it apart':'Assembled · MX-AI/HPC-120 reference'}</p>
+        <div class="pcall"><span id="pc-p">${p.id} · ${p.name}</span><span id="pc-l"></span><span id="pc-h"></span></div></div></div>`;
   }
 
-  const sheet=document.getElementById('sheet'), pcall=document.getElementById('pcall');
-  let prod=null, opener=null;
-  MX.prod={on:0,focus:null};
+  const sheet=document.getElementById('sheet');
+  let prod=null, opener=null, manual=null;
+  MX.prod={on:0,focus:null,x:0};
+  /* the window scrolls as one. Its scroll position is the product's story, as the page's is the build's:
+     assembled at the top, apart through the layers (the row on the reading line is the one in focus), closed up again by the CTA */
+  function pwScroll(){
+    const max=sheet.scrollHeight-sheet.clientHeight, top=sheet.scrollTop, f=max>0?top/max:1;
+    sheet.style.setProperty('--sp',f.toFixed(4)); sheet.classList.toggle('end',f>.985);
+    if(!prod) return;
+    const ch=sheet.clientHeight, line=top+ch*.5, base=sheet.getBoundingClientRect().top, pos=el=>el.getBoundingClientRect().top-base+top;
+    const L=sheet.querySelector('.sh-layers'), cta=sheet.querySelector('.sh-cta'), rows=[...sheet.querySelectorAll('.lys > li')];
+    let x=L?clamp((line-pos(L)+ch*.2)/(ch*.45),0,1):1, k;
+    if(cta) x*=1-clamp((line-pos(cta)+ch*.1)/(ch*.4),0,1);
+    if(rows.length){ k=null; if(line<pos(L)+L.offsetHeight) rows.forEach(r=>{ if(pos(r)<=line) k=r.querySelector('.ly').dataset.l; }); }
+    else { k=manual||prod.focus||null; if(manual) x=1; } // a layer picked from the chips opens the module up to show it
+    MX.prod.x=x;
+    if(k!==MX.prod.focus||!sheet.dataset.f) setFocus(k);
+    rows.forEach(r=>r.classList.toggle('on',r.querySelector('.ly').dataset.l===k));
+    const ap=x<.5, lab=$('pc-l'); if(!k&&lab.dataset.ap!==String(ap)){ lab.dataset.ap=ap; setFocus(null); }
+    const h=sheet.querySelector('.pw-hint'); h&&(h.style.opacity=x>.05?0:1);
+  }
+  sheet.addEventListener('scroll',pwScroll,{passive:true});
+  addEventListener('resize',()=>{ if(prod) pwScroll(); });
+  // the page is locked while the window is open, so a wheel anywhere outside it (but the nav) scrolls the window
+  addEventListener('wheel',e=>{ if(!prod||isMobile()||e.target.closest('.sheet,.navrail')) return; sheet.scrollTop+=e.deltaMode===1?e.deltaY*16:e.deltaY; },{passive:true});
+  document.getElementById('pscrim').addEventListener('click',()=>closeProduct());
   function setFocus(k){
-    MX.prod.focus=k||null;
+    MX.prod.focus=k||null; sheet.dataset.f=1;
     sheet.querySelectorAll('.ly').forEach(b=>{const on=b.dataset.l===k; b.classList.toggle('on',on);
       b.hasAttribute('aria-expanded')?b.setAttribute('aria-expanded',on):b.setAttribute('aria-pressed',on);});
-    const l=LBY[k];
-    $('pc-l').textContent=k?(k==='PC'?'L3 + L4 · Power + cooling':`${k} · ${l.n}`):'Exploded view · six layers';
-    $('pc-h').textContent=k&&l?l.h:(k==='PC'?'Where the skids connect to a module.':'Select a layer to zoom in.');
+    const l=LBY[k], ap=MX.prod.x<.5;
+    $('pc-l').textContent=k?(k==='PC'?'L3 + L4 · Power + cooling':`${k} · ${l.n}`):ap?'Assembled · six layers':'Exploded view · six layers';
+    $('pc-h').textContent=k&&l?l.h:(k==='PC'?'Where the skids connect to a module.':ap?'Scroll down to take it apart.':'Scroll through the layers to zoom in.');
     if(isMobile()&&prod) $('b-stage').textContent=prod.id+' · '+(k?($('pc-l').textContent):prod.name);
   }
   function openProduct(slug,{push=true,from=null}={}){
     const p=BY[slug]; if(!p) return;
     const first=!prod; prod=p; if(from) opener=from;
-    sheet.innerHTML=sheetHTML(p); sheet.scrollTop=0;
+    sheet.innerHTML=sheetHTML(p); sheet.scrollTop=0; manual=null; delete sheet.dataset.f;
     document.body.classList.add('prod'); sheet.setAttribute('aria-hidden','false');
-    MX.prod.on=1; setFocus(p.focus||null);
-    $('pc-p').textContent=p.id+' · '+p.name;
+    MX.prod.on=1; pwScroll();
     $('t-ch').textContent=p.name; $('t-sheet').textContent=p.id;
     navProduct(p); reveal();
     if(push) try{history.pushState({p:slug},'','#'+slug);}catch(e){}
@@ -1151,19 +1272,25 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
     const sol=chItems.find(c=>c.dataset.ch==='solutions');
     chItems.forEach(c=>{c.classList.toggle('open',c===sol); c.classList.toggle('on',c===sol);});
     links.forEach(a=>{const on=a.dataset.p===p.slug; a.classList.toggle('on',on); on?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current');});
+    const grp=p.fam==='Add-on'?'#addons':'#modules';
+    sol.querySelectorAll('li.base a').forEach(a=>a.classList.toggle('grp',a.getAttribute('href')===grp));
     current={a:document.querySelector(`.nav a[data-p="${p.slug}"]`),sub:true,ch:sol};
     requestAnimationFrame(()=>setTimeout(placeMarker,reduced?0:20));
   }
   function prefill(p,msg){
     const sel=document.getElementById('f-sol'); [...sel.options].forEach(o=>{if(o.text===p.sel) sel.value=o.value;});
-    if(msg){cta.classList.add('details'); document.getElementById('moreBtn').textContent='Fewer fields'; document.getElementById('f-msg').value=msg;}
+    if(msg) document.getElementById('f-msg').value=msg;
     if(!cta.classList.contains('open')) ctaBtn.click();
   }
   sheet.addEventListener('click',e=>{
     const t=e.target.closest('button,a'); if(!t||!prod) return;
-    if(t.dataset.back!=null){closeProduct(); const s=document.getElementById('modules'); s&&jumpTo(s); return;}
+    if(t.dataset.back!=null){const g=prod.fam==='Add-on'?'addons':'modules'; closeProduct(); const s=document.getElementById(g); s&&jumpTo(s); return;}
     if(t.dataset.step){const i=(PRODUCTS.indexOf(prod)+(+t.dataset.step)+PRODUCTS.length)%PRODUCTS.length; openProduct(PRODUCTS[i].slug); return;}
-    if(t.dataset.l){setFocus(MX.prod.focus===t.dataset.l?(prod.focus||null):t.dataset.l); return;}
+    if(t.dataset.l){
+      const row=t.closest('.lys > li');
+      if(row){ const r=row.getBoundingClientRect(), b=sheet.getBoundingClientRect(); sheet.scrollTo({top:sheet.scrollTop+r.top-b.top-sheet.clientHeight*.5+8,behavior:reduced?'auto':'smooth'}); }
+      else { manual=manual===t.dataset.l?null:t.dataset.l; pwScroll(); }
+      return;}
     if(t.dataset.p){e.preventDefault(); openProduct(t.dataset.p); return;}
     const goContact=()=>{closeProduct({focusBack:false}); jumpTo(document.getElementById('contact'));};
     if(t.dataset.quote!=null){ isMobile()?goContact():prefill(prod); return;}
@@ -1218,7 +1345,7 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
   prodOpen=()=>!!prod;
 
   /* ---------- camera framing: centre the module in the exhibition rail */
-  let shift=0;
+  let cx=innerWidth/2, cy=innerHeight/2, sc=1;
   const rlRow=$('t-reel'), rlTicks=[...document.querySelectorAll('#t-rseg i')];
   let slI=-1, slOn=null;
   function reelTele(){
@@ -1239,9 +1366,14 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
     const cam=window.MX.camera; if(!cam) return;
     const cv=document.getElementById('gl'), W=cv.clientWidth||innerWidth, H=cv.clientHeight||innerHeight;
     const nav=rail.getBoundingClientRect().width, content=document.querySelector('.railbg').getBoundingClientRect().width;
-    const target=isMobile()?0:lerp(W*.12,(nav+content)/2,smooth(R));
-    shift=lerp(shift,target,.12);
-    cam.setViewOffset(W,H,-shift,0,W,H);
+    /* where the module's centre lands on screen (cx, cy) and how large it is (sc): beside the text on the page,
+       centred and scaled down into the clear pane while the product window is open */
+    let tx=W/2+(isMobile()?0:lerp(W*.12,(nav+content)/2,smooth(R))), ty=H/2, ts=1;
+    const pv=prod&&!isMobile()&&sheet.querySelector('.pw-view');
+    if(pv){ const r=pv.getBoundingClientRect(); tx=(r.left+r.right)/2; ty=(r.top+r.bottom)/2; ts=clamp(r.width/(W*.6),.5,1); }
+    cx=lerp(cx,tx,.12); cy=lerp(cy,ty,.12); sc=lerp(sc,ts,.12);
+    const fw=W*sc, fh=H*sc;
+    cam.setViewOffset(fw,fh,fw/2-cx,fh/2-cy,W,H);
   }
 
   function onScroll(){reveal();active();}
@@ -1253,7 +1385,7 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
   { const s=location.hash.slice(1); if(BY[s]) openProduct(s,{push:false}); }
 
   /* ---------- 3D engine (from the Dictum Labs prototype) */
-  MX.loadScripts(['vendor/three.global.min.js','engine/gl-kit.js?v=11','engine/container-model.js?v=11','engine/world-home.js?v=11'])
+  MX.loadScripts(['vendor/three.global.min.js','engine/gl-kit.js?v=11','engine/container-model.js?v=11','engine/world-home.js?v=12'])
     .catch(err=>{
       console.error(err); doc.classList.add('no-gl');
       const n=document.getElementById('glnote'); n.hidden=false; n.textContent='3D scene unavailable: a script failed to load ('+(err&&err.target&&err.target.src||err)+')';

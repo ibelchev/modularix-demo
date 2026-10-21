@@ -14,12 +14,12 @@
   const mobile = MX.isMobile();
 
   /* ------------------------------------------------------------ product mode (drill-down): the page sets MX.prod = { on, focus }
-     on: 0/1 holds the module assembled and separates its six layers; focus: 'L1'…'L6' or 'PC' (power + cooling) zooms to that layer */
-  const PM = MX.prod || (MX.prod = { on: 0, focus: null });
+     on: 0/1 holds the module in view; x: 0–1 how far its six layers are apart (the window's scroll); focus: 'L1'…'L6' or 'PC' (power + cooling) zooms to that layer */
+  const PM = MX.prod || (MX.prod = { on: 0, focus: null, x: 1 });
   const XP = { frame: [0, 0, 0], brace: [0, 0, 0], floor: [0, 0, 0], wallFar: [0, 0, -3.4], wallNear: [0, 0, 3.4], endA: [-2.8, 0, 0], endB: [2.8, 0, 0],
     roof: [0, 7.4, 0], power: [0, 2.2, 0], cooling: [0, 3.1, 0], it: [0, 4.0, 0], safety: [0, 5.4, 0] };
   const LAYER = { L1: ['frame', 'brace', 'floor'], L2: ['wallFar', 'wallNear', 'endA', 'endB', 'roof'], L3: ['power'], L4: ['cooling'], L5: ['it'], L6: ['safety'], PC: ['power', 'cooling'] };
-  let pAmt = 0; const hiW = {};
+  let pAmt = 0, xAmt = 0; const hiW = {};
   const vP = new THREE.Vector3(), vL = new THREE.Vector3();
 
   /* ------------------------------------------------------------ ground, atmosphere */
@@ -332,11 +332,12 @@
 
     pAmt = MX.reduced ? PM.on : lerp(pAmt, PM.on, 1 - Math.exp(-dt * 2.6));
     if (Math.abs(pAmt - PM.on) < .001) pAmt = PM.on;
-    const st = reelOn ? reelState(rt) : { Tl: T, xr: win(T, 3.3, 3.48, 4.56, 4.74), Tt: T, Ts: T, Tc: T, Tlab: T, x: pAmt, story: T };
+    xAmt = MX.reduced ? (PM.x ?? 1) : lerp(xAmt, PM.x ?? 1, 1 - Math.exp(-dt * 5));
+    const st = reelOn ? reelState(rt) : { Tl: T, xr: win(T, 3.3, 3.48, 4.56, 4.74), Tt: T, Ts: T, Tc: T, Tlab: T, x: pAmt * xAmt, story: T };
     Object.assign(MX.reel, { on: reelOn, i: st.i ?? 0, u: st.u ?? 0, n: SHOTS[st.i ?? 0].n, story: st.story, p: rt / LOOP });
     const pX = st.x, focus = reelOn ? null : PM.focus;
     const { Tl, Tt, Ts, Tc } = st, xray = st.xr;
-    labelsEl.style.opacity = (1 - pX).toFixed(3);
+    labelsEl.style.opacity = (1 - Math.max(pX, pAmt)).toFixed(3);
     const intro = MX.reduced || reelOn ? 1 : smooth(clamp((t - t0 - .2) / 3.2, 0, 1));
     const crisp = R(Tl, .45, .95), base = lerp(.42, .9, crisp), mono = 1 - R(Tl, .55, 1.0);
     // a light sweep scans the blueprint on the cover, then once more over the design drawing
