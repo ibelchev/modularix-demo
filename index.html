@@ -601,18 +601,28 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
 /* ---------- phones: the exhibition plays in a band under the bar, content scrolls under it. No pins on the model:
    at this size they cover it. Scroll effects are kept simple: no tall stage sections, numbers shown as they are */
 @media (max-width:700px),(max-width:960px) and (max-height:500px){
-  :root{--content:100vw;--pad:max(16px,env(safe-area-inset-left,0px));--band:22svh;--top:calc(var(--bar) + var(--band))}
+  /* --ex: 1 on the first screen (the scene fills the screen under the bar), 0 once scrolled (the band); set by the script.
+     The canvas keeps its full height and is clipped to --vis, so the renderer never resizes while it contracts */
+  :root{--content:100vw;--pad:max(16px,env(safe-area-inset-left,0px));--band:22svh;--top:calc(var(--bar) + var(--band));
+    --vis:calc(var(--band) + (100svh - var(--bar) - var(--band)) * var(--ex,0))}
   .exh,.railbg::after{display:none}
   #labels,#labelsX{display:none}
-  #gl,#veil{top:var(--bar);bottom:auto;height:var(--band);z-index:5}
+  #gl,#veil{top:var(--bar);bottom:auto;height:calc(100svh - var(--bar));z-index:5;clip-path:inset(0 0 calc(100svh - var(--bar) - var(--vis)) 0)}
   #gl{background:radial-gradient(120% 140% at 60% 30%,#0c1c38 0%,#071024 55%,var(--bg) 100%)}
-  .hero::before{display:none}
+  /* first screen: the copy sits over the scene on a gradient, both fading out as the scene contracts. main stops being a
+     stacking context here so the hero copy can rise above the canvas; the reading rail drops behind the in-flow text */
+  main{z-index:auto}
+  .railbg{z-index:-1}
+  .hero::before{position:absolute;top:auto;bottom:0;left:0;right:0;width:auto;height:78%;z-index:7;
+    background:linear-gradient(to top,rgba(5,10,20,.94) 0%,rgba(5,10,20,.82) 42%,rgba(5,10,20,0) 100%)}
+  .hero > *{position:relative;z-index:8;opacity:var(--hf,1);transform:translateY(calc((1 - var(--hf,1)) * -18px))}
   /* the readout sits over the model, on a short fade */
-  .band{display:flex;position:fixed;top:var(--bar);left:0;right:0;height:var(--band);z-index:6;box-sizing:border-box;pointer-events:none;
+  .band{display:flex;position:fixed;top:var(--bar);left:0;right:0;height:var(--vis);z-index:6;box-sizing:border-box;pointer-events:none;
     justify-content:space-between;align-items:flex-end;padding:0 max(16px,env(safe-area-inset-right,0px)) 7px max(22px,env(safe-area-inset-left,0px));
     background:linear-gradient(to top,rgba(5,10,20,.88),rgba(5,10,20,0) 30px);border-bottom:1px solid var(--line2);
     font:400 10.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);font-variant-numeric:tabular-nums}
   .band::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:var(--blue);transform-origin:left;transform:scaleX(var(--bp,0))}
+  .band span{opacity:calc(1 - var(--ex,0))}
   .railbg{left:0;top:var(--top);transform:none;opacity:1}
   .hero{min-height:100svh;padding:var(--top) max(16px,env(safe-area-inset-right,0px)) 10vh max(22px,env(safe-area-inset-left,0px))}
   .col{padding-left:max(22px,env(safe-area-inset-left,0px));max-width:620px} /* landscape phones: keep lines readable */
@@ -992,8 +1002,8 @@ html.lean .pw-view::before{display:none}
   /* ---------- scroll → T for the 3D build (monotonic anchors, interpolated by viewport centre) */
   const anchors=[...document.querySelectorAll('[data-t]')].map(el=>({el,t:+el.dataset.t,y:0}));
   function measure(){ anchors.forEach(a=>{const r=a.el.getBoundingClientRect(); a.y=r.top+scrollY+Math.min(r.height,innerHeight)/2;}); anchors[0].y=innerHeight/2; }
-  const glEl=document.getElementById('gl');
-  const readY=()=>{ if(!isMobile()) return scrollY+innerHeight/2; const top=glEl.getBoundingClientRect().bottom; return scrollY+top+(innerHeight-top)*.35; };
+  const bandEl=document.querySelector('.band');
+  const readY=()=>{ if(!isMobile()) return scrollY+innerHeight/2; const top=bandEl.getBoundingClientRect().bottom; return scrollY+top+(innerHeight-top)*.35; };
   function chapterIndex(){
     const y=readY();
     if(y<=anchors[0].y) return anchors[0].t;
@@ -1021,6 +1031,8 @@ html.lean .pw-view::before{display:none}
     /* hero copy fades over the first ~28% of a viewport, ahead of the rails covering it */
     const hf=all?0:1-clamp(scrollY/(vh*.28),0,1);
     doc.style.setProperty('--hf',(hf*hf*(3-2*hf)).toFixed(4));
+    /* phones: the scene contracts from full screen to the band over the first ~60 % of a viewport */
+    doc.style.setProperty('--ex',all||!isMobile()?0:(1-smooth(clamp(scrollY/(vh*.6),0,1))).toFixed(4));
   }
   rail.addEventListener('focusin',()=>{peek=true;rail.classList.add('peek');reveal();});
   rail.addEventListener('focusout',e=>{if(!rail.contains(e.relatedTarget)){peek=false;rail.classList.remove('peek');reveal();}});
@@ -1519,7 +1531,11 @@ html.lean .pw-view::before{display:none}
     let tx=W/2+(isMobile()?0:lerp(W*.12,(nav+content)/2,smooth(R))), ty=H/2, ts=lerp(1,fit,smooth(R));
     const pv=prod&&!isMobile()&&sheet.querySelector('.pw-view');
     if(pv){ const r=pv.getBoundingClientRect(); tx=(r.left+r.right)/2; ty=(r.top+r.bottom)/2; ts=Math.min(clamp(r.width/(W*.6),.5,1),clamp(r.width/r.height/.8,.45,1)); }
-    cx=lerp(cx,tx,.12); cy=lerp(cy,ty,.12); sc=lerp(sc,ts,.12);
+    /* phones: centre the module in the visible part of the clipped canvas and scale it with it, in step with the scroll */
+    if(isMobile()&&!pv){ /* on the first screen the module sits high, clear of the hero copy */
+      const vis=bandEl.getBoundingClientRect().height, ex=+getComputedStyle(doc).getPropertyValue('--ex')||0;
+      ty=vis*lerp(.5,.34,ex); ts=vis/H; cx=tx; cy=ty; sc=ts; }
+    else { cx=lerp(cx,tx,.12); cy=lerp(cy,ty,.12); sc=lerp(sc,ts,.12); }
     const fw=W*sc, fh=H*sc;
     cam.setViewOffset(fw,fh,fw/2-cx,fh/2-cy,W,H);
   }
