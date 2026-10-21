@@ -184,6 +184,8 @@ body.gl-ready #gl{opacity:1}
 body.reel .exh .tele{opacity:1}
 /* telemetry, compact: header line, reel line, 2 × 2 readings, build line */
 .exh .tele{width:236px;padding:9px 11px 10px;gap:8px;font-size:9.5px}
+/* first screen: the panel sits bottom right; it rises with the rail reveal (--r) and docks top right */
+.exh .tele{transform:translateY(calc((1 - var(--r)) * (100vh - 44px - 100%)))}
 .tele .hd{align-items:center}
 .tele .hd .live{flex:1;color:var(--ink);letter-spacing:.12em}
 .tele .hd em{font-style:normal;color:var(--dim);font-variant-numeric:tabular-nums}
@@ -573,11 +575,7 @@ html.lean .railbg::after,html.lean .railbg::before{display:none}
 html.lean .navrail::after{animation:none;background:var(--line2)}
 html.lean .ch > a .no{visibility:hidden}
 html.lean .exh .cnr,html.lean .exh .xh,html.lean .exh .ruler,html.lean .exh .tblock{display:none}
-html.lean .live::before{animation:none}
-/* telemetry: readings only, no sparklines, rack cells or meters; a quiet panel without the blue cap */
-html.lean .tele{border-top-width:1px;border-color:var(--line);gap:6px}
-html.lean .tele .spark,html.lean .tele .racks,html.lean .tele .bar,html.lean .tele .seg{display:none}
-html.lean .tele .tg{border-block-color:transparent;padding-block:4px}
+/* the telemetry panel keeps its graphics in both modes */
 /* nav foot: the mini telemetry repeats the exhibition panel, so it goes */
 html.lean .deco{visibility:hidden}
 html.lean .ch-sec > .col > header::after{background:linear-gradient(var(--line2),var(--line2)) left bottom/100% 1px no-repeat}
