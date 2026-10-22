@@ -536,8 +536,8 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
    model it shows. The plate is an info layer over the scene: scroll still drives the build, and leaving the stage closes it */
 .evs{margin-top:22px}
 .evs-hd{margin:0;display:flex;justify-content:space-between;gap:12px;font:400 10px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:8px}
-.evs ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
-.ev{all:unset;box-sizing:border-box;position:relative;display:block;width:100%;aspect-ratio:3/4;cursor:pointer;overflow:hidden;
+.evs ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.ev{all:unset;box-sizing:border-box;position:relative;display:block;width:100%;aspect-ratio:1;cursor:pointer;overflow:hidden;
   background:#0d3560;border:1px solid var(--line2)}
 .ev img{display:block;width:100%;height:100%;object-fit:cover;mix-blend-mode:luminosity;opacity:.82;filter:contrast(1.08);transition:opacity .3s var(--ease)}
 .ev:hover img,.ev:focus-visible img,.ev.on img{mix-blend-mode:normal;opacity:1;filter:none}
@@ -546,10 +546,10 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
 .ev.on{border-color:var(--blue2);box-shadow:inset 0 0 0 1px var(--blue2)}
 .ev:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 
-/* the plate: a drawing-sheet card in the exhibition's left half, clear of the telemetry; the camera re-frames the module
-   into what is left on the right. A wheel over it still scrolls the page (and so the build), so no scroll containment */
-.plate{--c:var(--blue2);position:fixed;z-index:4;top:64px;left:calc(var(--nav) + var(--content) + 40px);
-  width:clamp(260px,calc((100vw - var(--nav) - var(--content)) * .42),420px);max-height:calc(100vh - 64px - 74px);box-sizing:border-box;
+/* the plate: a drawing-sheet card in the exhibition's left half, stepping a little over the content rail's edge; the camera
+   re-frames the module into what is left on the right. A wheel over it still scrolls the page (and so the build) */
+.plate{--c:var(--blue2);--over:56px;position:fixed;z-index:4;top:64px;left:calc(var(--nav) + var(--content) - var(--over));
+  width:clamp(320px,calc((100vw - var(--nav) - var(--content)) * .5 + var(--over)),600px);max-height:calc(100vh - 64px - 74px);box-sizing:border-box;
   display:flex;flex-direction:column;background:rgba(5,12,30,.9);border:1px solid var(--line2);border-top:2px solid var(--c);
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);box-shadow:0 24px 60px rgba(0,0,0,.55);outline:0;
   opacity:0;visibility:hidden;transform:translateY(8px);transition:opacity .3s var(--ease),transform .3s var(--ease),visibility 0s .3s}
@@ -564,12 +564,18 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
 .pl-body{overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--line3) transparent;padding:12px}
 .pl-fig{margin:0}
 /* the frame: hairline with corner marks, the photo contained so nothing is cropped */
-.pl-frame{position:relative;aspect-ratio:var(--ar,3/4);max-height:52vh;width:100%;background:#030814;border:1px solid var(--line)}
+.pl-frame{position:relative;aspect-ratio:var(--ar,3/4);max-height:62vh;width:100%;background:#030814;border:1px solid var(--line)}
 .pl-frame::before,.pl-frame::after{content:"";position:absolute;width:10px;height:10px;border:0 solid var(--c);pointer-events:none;z-index:1}
 .pl-frame::before{top:-1px;left:-1px;border-top-width:1px;border-left-width:1px}
 .pl-frame::after{bottom:-1px;right:-1px;border-bottom-width:1px;border-right-width:1px}
 .pl-frame img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
 .pl-frame.scan{background:#e9ebee}
+/* hover zoom: under a mouse the frame pans the same file at its natural size, following the cursor (only when that is
+   meaningfully larger than the frame; the file is the one the plate already loaded, nothing extra is fetched) */
+.pl-zm{position:absolute;inset:0;overflow:hidden;opacity:0;transition:opacity .2s var(--ease);background:inherit;pointer-events:none}
+.pl-zm img{position:absolute;left:0;top:0;right:auto;bottom:auto;width:auto;height:auto;max-width:none;object-fit:fill;will-change:transform}
+.pl-frame.zoomable{cursor:zoom-in}
+.pl-frame.zooming{cursor:crosshair}.pl-frame.zooming .pl-zm{opacity:1}
 .pl-frame .wh{position:absolute;inset:0;display:grid;place-content:center;gap:8px;padding:24px;text-align:center;
   background:repeating-linear-gradient(135deg,rgba(150,190,240,.07) 0 1px,transparent 1px 9px),#061230;
   font:400 10.5px/1.5 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
@@ -589,9 +595,13 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
 /* leader: plate edge → elbow → pin on the model, in the plate's system colour */
 .leader{position:fixed;inset:0;width:100%;height:100%;z-index:4;pointer-events:none;opacity:0;transition:opacity .3s var(--ease);color:var(--blue2)}
 .leader.on{opacity:1}
-.leader path{fill:none;stroke:currentColor;stroke-width:1;stroke-dasharray:3 3}
+/* a dark halo under the line and the pin keeps both readable over the bright parts of the model */
+.leader path{fill:none;stroke:currentColor;stroke-width:2.5;stroke-dasharray:8 5;stroke-linecap:round}
+.leader path.hl{stroke:rgba(3,8,20,.75);stroke-width:6.5;stroke-dasharray:none}
 .leader .pt{fill:currentColor}
-.leader .rg{fill:none;stroke:currentColor;stroke-width:1;opacity:.6}
+.leader .ph{fill:rgba(3,8,20,.55);stroke:currentColor;stroke-width:2}
+.leader .st{fill:currentColor;stroke:rgba(3,8,20,.7);stroke-width:2}
+.leader .rg{fill:none;stroke:currentColor;stroke-width:2;opacity:.7}
 @media (prefers-reduced-motion:no-preference){.leader .rg{animation:ring 2.2s ease-out infinite;transform-box:fill-box;transform-origin:center}}
 @keyframes ring{0%{transform:scale(.4);opacity:.9}100%{transform:scale(1.6);opacity:0}}
 .leader.power{color:var(--power)}.leader.cool{color:var(--cool)}.leader.it{color:var(--it)}.leader.safe{color:var(--safe)}.leader.ok{color:var(--ok)}
@@ -634,7 +644,6 @@ html.pl-full .exh .tele{opacity:0!important;visibility:hidden}
   .pl-body{overscroll-behavior:contain}
   .leader{display:none}
   .pl-x,.pl-pg button{width:44px;height:44px}
-  .evs ol{grid-template-columns:repeat(4,1fr)}
 }
 @media (prefers-reduced-motion:reduce){.plate,.plate.open,.leader,.ev img{transition:none}}
 
@@ -1083,7 +1092,7 @@ html.lean .pw-view::before{display:none}
   <div class="pl-body"><figure class="pl-fig"><div class="pl-frame" id="pl-frame"></div><figcaption id="pl-cap"></figcaption></figure><dl class="pl-meta" id="pl-meta"></dl></div>
   <div class="pl-ft"><span class="pl-pg"><button type="button" data-step="-1" aria-label="Previous">‹</button><span id="pl-n"></span><button type="button" data-step="1" aria-label="Next">›</button></span><a id="pl-full" target="_blank" rel="noopener">Full size ↗</a></div>
 </aside>
-<svg class="leader" id="leader" aria-hidden="true"><path id="ld-p"/><circle class="rg" id="ld-r" r="9"/><circle class="pt" id="ld-c" r="3.5"/></svg>
+<svg class="leader" id="leader" aria-hidden="true"><path class="hl" id="ld-h"/><path id="ld-p"/><circle class="st" id="ld-s" r="3.5"/><g id="ld-g"><circle class="rg" r="20"/><circle class="ph" r="10"/><circle class="pt" r="4.5"/></g></svg>
 
 <div class="pscrim" id="pscrim" aria-hidden="true"></div>
 <article class="sheet" id="sheet" aria-label="Solution details" aria-hidden="true"></article>
@@ -1645,7 +1654,7 @@ html.lean .pw-view::before{display:none}
       `<span class="dn"><b>${c.name}</b>${c.topic}</span><span class="dm">${c.issuer}${c.no!=='—'?' · No. '+c.no:''} ${siteChip(c)}${c.withheld?' '+chip('A21','A21: the scan carries an engineer’s name, date of birth and CNP; not republished'):''}</span>`+
       `<span class="dv"><span>${vl}</span>${vv}</span></button></li>`;}).join('')}</ol></section>`).join('');
 
-  const plate=$('plate'), leader=$('leader'), plFrame=$('pl-frame'), ldP=$('ld-p'), ldC=$('ld-c'), ldR=$('ld-r');
+  const plate=$('plate'), leader=$('leader'), plFrame=$('pl-frame'), ldP=$('ld-p'), ldH=$('ld-h'), ldS=$('ld-s'), ldG=$('ld-g');
   let pl=null; /* { items, i, btns }: the set being paged through and the buttons that open it */
   function plateShow(){
     const it=pl.items[pl.i], p=it.p, isDoc=p.kind==='doc', file=isDoc?p.file:'img/ev/'+p.id;
@@ -1653,7 +1662,7 @@ html.lean .pw-view::before{display:none}
     $('pl-tag').textContent=it.tag; $('pl-ctx').textContent=it.ctx;
     plFrame.className='pl-frame'+(isDoc&&file?' scan':'');
     plFrame.style.setProperty('--ar',p.w?p.w+'/'+p.h:/^se-/.test(p.id)?'1400/995':'1/1.414');
-    plFrame.innerHTML=file?`<img src="${file}.webp" alt="${esc(p.alt||p.name+' certificate, '+p.std+', '+p.issuer)}">`
+    plFrame.innerHTML=file?`<img src="${file}.webp" alt="${esc(p.alt||p.name+' certificate, '+p.std+', '+p.issuer)}"><span class="pl-zm" aria-hidden="true"><img src="${file}.webp" alt=""></span>`
       :`<div class="wh"><b>Scan withheld</b>It names an engineer, with their date of birth and personal ID number.</div>`;
     const full=$('pl-full'); full.hidden=!file; if(file) full.href=file+'.webp';
     $('pl-cap').innerHTML=isDoc?`<b>${p.name}</b> · ${p.topic}`:esc(p.cap);
@@ -1663,7 +1672,7 @@ html.lean .pw-view::before{display:none}
         row('Issuer',p.issuer+(p.no!=='—'?' · No. '+p.no:''))+row('Issued',p.first+(p.recert?' · recertified '+p.recert:''))+row('Valid',p.valid)+
         row('Scope',p.scope)+row('Current site',p.site+' '+siteChip(p))+(p.withheld?row('Scan',chip('A21','A21: AGFR scan carries an engineer’s name, date of birth and CNP; not republished')):'')
       : row('Source',(p.src.startsWith('#')?`Project ${p.src} · Synotech group ${chip('A6','A6: Synotech group projects, shown separately from Modularix')}`:p.src)+' '+chipsOf(p))+
-        row('Shows',AN_NAME[p.anchor]||'—')+row('File',`${p.w} × ${p.h} px`);
+        row('Shows',AN_NAME[p.anchor]||'—');
     $('pl-n').textContent=(pl.i+1)+' / '+pl.items.length;
     pl.btns.forEach((b,i)=>b.classList.toggle('on',i===pl.i));
   }
@@ -1704,6 +1713,21 @@ html.lean .pw-view::before{display:none}
     if(!can){ e.preventDefault(); scrollBy(0,d); }
   },{passive:false});
   $('plX').addEventListener('click',()=>closePlate());
+  /* hover zoom (mouse only): the cursor's place in the frame picks the same place in the natural-size image */
+  const ZOOM_MIN=1.2;
+  function zoomAt(e){
+    const z=plFrame.querySelector('.pl-zm img');
+    if(e.pointerType!=='mouse'||!z||!z.naturalWidth){ plFrame.classList.remove('zoomable','zooming'); return; }
+    const r=plFrame.getBoundingClientRect(), w=z.naturalWidth, h=z.naturalHeight;
+    /* only worth it when the file is clearly bigger than the photo as shown (contained in the frame) */
+    if(Math.max(w/r.width,h/r.height)<ZOOM_MIN){ plFrame.classList.remove('zoomable','zooming'); return; }
+    const u=clamp((e.clientX-r.left)/r.width,0,1), v=clamp((e.clientY-r.top)/r.height,0,1);
+    z.style.transform=`translate(${((r.width-w)*u).toFixed(1)}px,${((r.height-h)*v).toFixed(1)}px)`;
+    plFrame.classList.add('zoomable','zooming');
+  }
+  plFrame.addEventListener('pointerenter',zoomAt);
+  plFrame.addEventListener('pointermove',zoomAt);
+  plFrame.addEventListener('pointerleave',()=>plFrame.classList.remove('zooming'));
   /* the plate belongs to its stage (or the register): scrolling it out of the middle of the screen closes it */
   /* "leaving" = the nav's active section moves off the one the plate was opened in, or its stage leaves the screen */
   const plateOwnerGone=()=>{
@@ -1722,8 +1746,10 @@ html.lean .pw-view::before{display:none}
     const cv=$('gl').getBoundingClientRect(), pr=plate.getBoundingClientRect(), fr=plFrame.getBoundingClientRect();
     const ax=cv.left+a.x, ay=cv.top+a.y, sx=pr.right, sy=clamp(fr.top+fr.height/2,pr.top+40,pr.bottom-40);
     if(ax<sx+30||ax>innerWidth-8||ay<8||ay>innerHeight-8){ leader.classList.remove('on'); return; }
-    ldP.setAttribute('d',`M${sx.toFixed(1)} ${sy.toFixed(1)} H${(sx+18).toFixed(1)} L${ax.toFixed(1)} ${ay.toFixed(1)}`);
-    for(const c of [ldC,ldR]){ c.setAttribute('cx',ax.toFixed(1)); c.setAttribute('cy',ay.toFixed(1)); }
+    const d=`M${sx.toFixed(1)} ${sy.toFixed(1)} H${(sx+18).toFixed(1)} L${ax.toFixed(1)} ${ay.toFixed(1)}`;
+    ldP.setAttribute('d',d); ldH.setAttribute('d',d);
+    ldS.setAttribute('cx',sx.toFixed(1)); ldS.setAttribute('cy',sy.toFixed(1));
+    ldG.setAttribute('transform',`translate(${ax.toFixed(1)} ${ay.toFixed(1)})`);
     leader.classList.add('on');
   }
 
