@@ -31,6 +31,11 @@
   const M = MX.container.build(), D = M.D, K = MX.container.K, Ly = M.layers;
   const mod = M.root; scene.add(mod);
 
+  /* ------------------------------------------------------------ the other solutions (product-models.js), built the first time their sheet opens;
+     the page names the product in MX.prod.slug, and the reference module (with its site) hands over to its model in a crossfade */
+  const PMOD = {}, pW = {};
+  const pmodel = s => PMOD[s] || (MX.products && MX.products.has(s) ? (PMOD[s] = MX.products.build(s), scene.add(PMOD[s].root), PMOD[s]) : null);
+
   /* ------------------------------------------------------------ factory bay (Pantelimon): floor marks + hall portals */
   const fac = new G.Lines();
   fac.rect(-10.6, -4.2, 10.6, 4.2, .01, o(C.power, .5, { dash: .45 }));
@@ -244,6 +249,8 @@
 
   const labelsEl = document.getElementById('labels');
   function prodPose(f) {
+    const pm = PM.slug && PMOD[PM.slug];
+    if (pm) { const q = pm.poses[f] || pm.poses.base; return K_(0, q.l, q.az, q.el, q.d); }
     const z = Ly.floor.a, at = (p, dy) => [p[0], dy, 0];
     switch (f) {
       case 'L1': return K_(0, [0, 1.0, 0], 52, 24, 27);
@@ -354,6 +361,11 @@
     Object.assign(MX.reel, { on: reelOn, i: st.i ?? 0, u: st.u ?? 0, n: SHOTS[st.i ?? 0].n, story: st.story, p: rt / LOOP });
     const pX = st.x, focus = reelOn ? null : PM.focus;
     const { Tl, Tt, Ts, Tc } = st, xray = st.xr;
+    // another solution's model in view: keep (1 → 0) is how much of the reference module and its site still shows
+    const slug = PM.on && !reelOn ? PM.slug : null; if (slug) pmodel(slug);
+    let alt = 0;
+    for (const s in PMOD) { pW[s] = MX.reduced ? +(s === slug) : lerp(pW[s] ?? 0, s === slug ? 1 : 0, 1 - Math.exp(-dt * 4)); alt = Math.max(alt, pW[s]); }
+    const keep = 1 - smooth(alt);
     labelsEl.style.opacity = (1 - Math.max(pX, pAmt)).toFixed(3);
     const intro = MX.reduced || reelOn ? 1 : smooth(clamp((t - t0 - .2) / 3.2, 0, 1));
     const crisp = R(Tl, .45, .95), base = lerp(.42, .9, crisp), mono = 1 - R(Tl, .55, 1.0);
@@ -363,7 +375,7 @@
 
     for (const n in Ly) {
       const l = Ly[n], b = B[n];
-      if (n === 'ext') { l.set({ draw: R(Tl, 6.1, 6.25), line: 1, pts: R(Tl, 6.1, 6.25) }); continue; }
+      if (n === 'ext') { l.set({ draw: R(Tl, 6.1, 6.25), line: keep, pts: R(Tl, 6.1, 6.25) * keep }); continue; }
       let a = lerp(base, .3, R(Tl, 1.3, 1.6));
       a = lerp(a, 1, R(Tl, b[0] - .18, b[0]));
       a = lerp(a, .42, R(Tl, b[1], b[1] + .3));
@@ -379,12 +391,29 @@
         op = lerp(op, env ? (focus === 'L2' ? .85 * h : .12) : lerp(.18, 1, h), q);
         rev = lerp(rev, 1, q);
       }
-      l.set({ draw: intro, line: a, mono, reveal: rev, solid: op, pts: R(Tl, b[1] - .04, b[1] + .1), scan: [scanX, scanA] });
+      l.set({ draw: intro, line: a * keep, mono, reveal: rev, solid: op * keep, pts: R(Tl, b[1] - .04, b[1] + .1) * keep, scan: [scanX, scanA] });
       const x = XP[n]; if (x) { const e = smooth(pX); l.group.position.set(x[0] * e, x[1] * e, x[2] * e); }
     }
     // water and power in motion: commissioning test in the factory, then for good on site
     const cool = Math.max(win(Tl, 3.96, 4.1, 4.6, 4.72), R(Ts, 6.08, 6.25));
-    Ly.cooling.set({ flow: cool }); Ly.power.set({ flow: R(Ts, 6.08, 6.25) });
+    Ly.cooling.set({ flow: cool * keep }); Ly.power.set({ flow: R(Ts, 6.08, 6.25) * keep });
+
+    // the other solutions' models: assembled, or apart and focused like the reference module, at the weight of the crossfade
+    for (const s in PMOD) {
+      const pm = PMOD[s], w = smooth(pW[s]); pm.root.visible = w > .002; if (!pm.root.visible) continue;
+      const foc = s === slug ? focus : null, q = smooth(pX);
+      for (const n in pm.layers) {
+        const l = pm.layers[n];
+        if (n === 'ghost') { l.set({ draw: 1, line: w * (1 - q * .6) }); continue; }
+        const k = s + ':' + n, inF = !foc || (LAYER[foc] || []).includes(n), env = LAYER.L2.includes(n);
+        hiW[k] = lerp(hiW[k] ?? 1, inF ? 1 : 0, MX.reduced ? 1 : 1 - Math.exp(-dt * 5));
+        const h = hiW[k];
+        const a = lerp(.5, lerp(.1, env ? .7 : 1, h), q), op = lerp(1, env ? (foc === 'L2' ? .85 * h : .12) : lerp(.18, 1, h), q);
+        l.set({ draw: 1, line: a * w, mono: 0, reveal: 1, solid: op * w, pts: w * (env ? 1 - q * .7 : 1), flow: w, glow: n === 'it' ? .25 : 0 });
+        const x = XP[n]; if (x) l.group.position.set(x[0] * q, x[1] * q, x[2] * q);
+      }
+      pm.fans.forEach((f, i) => f.rotation.y += dt * (2 + i * .3) * 4);
+    }
     M.fans.forEach((f, i) => f.rotation.y += dt * (2 + i * .3) * cool * 4);
     Ly.it.set({ glow: .25 * R(Tl, 4.2, 4.4) });
 
@@ -393,8 +422,8 @@
     mod.position.y = yLift;
     const truckX = Tt < 5.5 ? lerp(-38, 0, R(Tt, 4.94, 5.12)) : lerp(0, 36, R(Tt, 5.86, 6.05));
     truckMesh.position.x = truckX;
-    G.setLines(truckMesh, R(Tt, 4.9, 5.05), win(Tt, 4.92, 5.02, 5.95, 6.06));
-    const crane = win(Tt, 4.55, 4.72, 5.22, 5.38);
+    G.setLines(truckMesh, R(Tt, 4.9, 5.05), win(Tt, 4.92, 5.02, 5.95, 6.06) * keep);
+    const crane = win(Tt, 4.55, 4.72, 5.22, 5.38) * keep;
     G.setLines(craneMesh, R(Tt, 4.55, 4.86), crane);
     G.setLines(rigMesh, R(Tt, 4.66, 4.86), crane); rigMesh.position.y = yLift;
     const spY = 7.4 + yLift; ropeMesh.position.y = spY; ropeMesh.scale.y = Math.max(.01, tip[1] - spY);
@@ -402,16 +431,16 @@
     const travel = R(Tt, 5.25, 5.78);
     ground.userData.u.uShift.value = travel * 160;
     roadMesh.position.x = -((travel * 160) % 6);
-    G.setLines(roadMesh, R(Tt, 5.18, 5.36), win(Tt, 5.2, 5.32, 5.74, 5.86));
-    G.setLines(facMesh, intro, (lerp(.55, 1, crisp) * (1 - R(Tt, 5.05, 5.25))));
-    G.setLines(dimMesh, R(Tl, .62, 1.05), win(Tl, .55, .8, 1.35, 1.6));
+    G.setLines(roadMesh, R(Tt, 5.18, 5.36), win(Tt, 5.2, 5.32, 5.74, 5.86) * keep);
+    G.setLines(facMesh, intro, lerp(.55, 1, crisp) * (1 - R(Tt, 5.05, 5.25)) * keep);
+    G.setLines(dimMesh, R(Tl, .62, 1.05), win(Tl, .55, .8, 1.35, 1.6) * keep);
 
     // site + campus
-    site.set({ draw: R(Ts, 5.55, 5.95), line: R(Ts, 5.55, 5.7), reveal: R(Ts, 5.78, 6.08), solid: 1, pts: R(Ts, 6.1, 6.3), flow: R(Ts, 6.08, 6.25) });
-    campus.forEach((g, i) => { const s = 6.42 + i * .045; g.set(R(Tc, s, s + .12), .55, R(Tc, s + .08, s + .2), 1); });
-    G.setLines(cpadMesh, R(Tc, 6.38, 6.6), .7 * R(Tc, 6.38, 6.5));
+    site.set({ draw: R(Ts, 5.55, 5.95), line: R(Ts, 5.55, 5.7) * keep, reveal: R(Ts, 5.78, 6.08), solid: keep, pts: R(Ts, 6.1, 6.3) * keep, flow: R(Ts, 6.08, 6.25) * keep });
+    campus.forEach((g, i) => { const s = 6.42 + i * .045; g.set(R(Tc, s, s + .12), .55 * keep, R(Tc, s + .08, s + .2), keep); });
+    G.setLines(cpadMesh, R(Tc, 6.38, 6.6), .7 * R(Tc, 6.38, 6.5) * keep);
 
-    const ping = (win(Ts, 6.1, 6.25, 6.55, 6.8) + (reelOn ? 0 : .6 * R(T, 8.6, 9))) * (1 - xray) * (1 - pX);
+    const ping = (win(Ts, 6.1, 6.25, 6.55, 6.8) + (reelOn ? 0 : .6 * R(T, 8.6, 9))) * (1 - xray) * (1 - pX) * keep;
     rings.forEach((m, i) => { const f = (t * .32 + i / 3) % 1; m.scale.set(9 + f * 16, 1, (9 + f * 16) * .42); G.setLines(m, 1, ping * (1 - f) * .8); });
 
     // ground + light pool

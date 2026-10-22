@@ -493,22 +493,29 @@
       U.uPix.value = h * dpr * .055;
       o.onResize && o.onResize(w, h);
     }
-    resize(); addEventListener('resize', resize);
-    // follow the canvas box, so a CSS-sized canvas (mobile exhibition band) renders at its own aspect
-    if (window.ResizeObserver) new ResizeObserver(() => resize()).observe(canvas);
+    resize();
+    // follow the canvas box, so a CSS-sized canvas (mobile exhibition band) renders at its own aspect; window resize only as a fallback
+    if (window.ResizeObserver) new ResizeObserver(() => resize()).observe(canvas); else addEventListener('resize', resize);
     // mouse parallax target
     const rigs = [];
     addEventListener('pointermove', e => { if (e.pointerType !== 'mouse') return; rigs.forEach(r => { r.tx = (e.clientX / innerWidth - .5) * 2; r.ty = (e.clientY / innerHeight - .5) * -2; }); }, { passive: true });
     return { renderer, scene, camera, resize, rigs };
   }
 
-  // the render loop: T comes from the scroll model, smoothed so jumps glide
+  // the render loop: T comes from the scroll model, smoothed so jumps glide.
+  // Frames are capped at 60 fps (high-refresh screens would draw twice as often for no gain). Once nothing has moved for a while
+  // (no input, T settled, no reel) the ambient motion drops to 30 fps; with reduced motion the scene stops drawing altogether.
   function run(ctx, frame) {
-    let last = performance.now(), Ts = MX.chapterIndex(), first = true;
+    let last = performance.now(), Ts = MX.chapterIndex(), first = true, wake = last;
+    const poke = () => { wake = performance.now(); };
+    ['scroll', 'wheel', 'pointermove', 'pointerdown', 'keydown', 'touchstart', 'resize'].forEach(t => addEventListener(t, poke, { passive: true }));
+    MX.wake = poke;
     const loop = now => {
       requestAnimationFrame(loop);
-      const dt = Math.min(.05, (now - last) / 1000); last = now;
       const T = MX.chapterIndex();
+      const idle = now - wake > (MX.reduced ? 1500 : 8000) && Math.abs(Ts - T) < 1e-4 && !(MX.reel && MX.reel.on && !MX.reduced);
+      if (!first && (idle && MX.reduced || now - last < (idle ? 33 : 15.5))) return;
+      const dt = Math.min(.05, (now - last) / 1000); last = now;
       Ts = MX.reduced ? T : lerp(Ts, T, 1 - Math.exp(-dt * 4.2));
       if (MX.snapT) { MX.snapT = false; Ts = T; ctx.rigs.forEach(r => r.init = false); } // a cut (nav jump under the page veil): no catch-up
       if (Math.abs(Ts - T) < 1e-4) Ts = T;

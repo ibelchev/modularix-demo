@@ -1,11 +1,47 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="en-GB">
+<head>
 <meta name="robots" content="noindex, nofollow">
-<title>Modularix Prototype v2</title>
-<meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Modularix · Factory-built modular data centres</title>
+<meta name="description" content="Prefabricated, modular and containerised data centres, designed, welded, fitted and tested in our own factory in Romania, then shipped to your site as one piece. A Synotech company.">
+<link rel="canonical" href="https://modularix.world/">
+<meta name="theme-color" content="#050a14">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="img/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Modularix">
+<meta property="og:locale" content="en_GB">
+<meta property="og:url" content="https://modularix.world/">
+<meta property="og:title" content="Modularix · Factory-built modular data centres">
+<meta property="og:description" content="Prefabricated, modular and containerised data centres, built and tested in our own factory in Romania, then shipped to your site as one piece.">
+<meta property="og:image" content="https://modularix.world/img/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A finished Modularix module on its plinths, beside the Modularix logo and the line: modular data centres, built in our own factory.">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"Organization","@id":"https://modularix.world/#org","name":"Modularix","url":"https://modularix.world/","logo":"https://modularix.world/img/apple-touch-icon.png",
+  "description":"Factory-built, transportable modular data centres.","email":"office@modularix.com","telephone":"+40 722 598 251",
+  "address":{"@type":"PostalAddress","addressLocality":"Bucharest","addressCountry":"RO"},
+  "parentOrganization":{"@type":"Organization","name":"Synotech","url":"https://synotech.com"}},
+ {"@type":"WebSite","@id":"https://modularix.world/#website","url":"https://modularix.world/","name":"Modularix","inLanguage":"en-GB","publisher":{"@id":"https://modularix.world/#org"}}
+]}
+</script>
+<link rel="preload" href="fonts/outfit-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/archivo-latin-wght.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="vendor/three.global.min.js" as="script">
 <style>
+/* Fonts: self-hosted Latin subsets of the variable fonts (SIL Open Font Licence 1.1), so no visitor data goes to Google */
+@font-face{font-family:"Outfit";font-style:normal;font-weight:400 600;font-display:swap;src:url(fonts/outfit-latin-wght.woff2) format("woff2")}
+@font-face{font-family:"Archivo";font-style:normal;font-weight:400 700;font-display:swap;src:url(fonts/archivo-latin-wght.woff2) format("woff2")}
+@font-face{font-family:"JetBrains Mono";font-style:normal;font-weight:400 600;font-display:swap;src:url(fonts/jetbrains-mono-latin-wght.woff2) format("woff2")}
+body{margin:0}
+img{max-width:100%}
+[hidden]:not([hidden=until-found i]){display:none!important}
 /* Layout: three rails at golden ratio (nav : content : exhibition = 1 : φ : φ²) over a full-bleed 3D canvas.
    First screen shows no rails, only the red edge line; the rails extend from the left as the visitor scrolls.
    Decoration layer 1 (stage 2): translucent nav, drawing-sheet lines, simulated telemetry with filling bars. */
@@ -63,6 +99,11 @@ body.gl-ready #gl{opacity:1}
    starts at its right edge (the nav background is translucent, so a wash behind it would dim it too) */
 #jump{left:var(--nav)}
 #veil{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:0;background:radial-gradient(120% 90% at 66% 40%,#0c1c38 0%,#071024 40%,var(--bg) 74%) fixed,var(--bg)}
+/* no WebGL: the CAD cutaway of the reference build, as a blueprint, stands in for the scene in the exhibition */
+.no-gl #gl,.no-gl #labels{display:none}
+.no-gl body::before{content:"";position:fixed;top:0;bottom:0;right:0;left:calc(var(--nav) + var(--content));z-index:0;pointer-events:none;
+  background:url(img/ev/rb-cad-cutaway.webp) center/min(80%,640px) no-repeat;filter:invert(1) hue-rotate(180deg) saturate(.5);mix-blend-mode:screen;opacity:.32}
+@media (max-width:900px){.no-gl body::before{display:none}}
 .glnote{position:fixed;right:16px;bottom:14px;z-index:7;margin:0;font:400 11px var(--mono);color:#ffb1ab;background:rgba(5,10,20,.85);padding:6px 9px;border:1px solid rgba(248,56,48,.5)}
 /* ---------- red edge line (left edge, grounds the nav) */
 .edge{position:fixed;top:0;bottom:0;left:0;width:6px;background:var(--red);z-index:6}
@@ -529,6 +570,11 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
 .contact dd a:hover,.sh-contact a:hover{text-decoration:underline;text-underline-offset:3px}
 .foot{padding:12vh 0 8vh}
 .foot p{font-size:12.5px;color:var(--faint)}
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.legal{display:flex;flex-wrap:wrap;gap:6px 18px;margin-bottom:14px;font-size:12.5px}
+.legal a{color:var(--dim);text-decoration:none}.legal a:hover{color:#fff;text-decoration:underline;text-underline-offset:3px}
+.cta .fpriv{font:400 11.5px/1.45 var(--body);color:var(--faint);margin:10px 0 0}
+.cta .fpriv a{color:#9db6d3}
 .proto-note{margin-top:14px;font-size:12.5px;color:var(--faint);border-top:1px solid var(--line);padding-top:12px}
 
 /* ---------- evidence: real photos and drawings, muted to the drawing language at rest, in true colour once opened.
@@ -800,6 +846,8 @@ html.lean .pw-view::before{display:none}
 .exh{z-index:4}
 .exh .tele{pointer-events:auto;cursor:pointer}
 </style>
+</head>
+<body>
 
 <canvas id="gl" aria-hidden="true"></canvas>
 <div id="labels" aria-hidden="true"></div>
@@ -812,7 +860,7 @@ html.lean .pw-view::before{display:none}
 
 <!-- phones and tablets in portrait: the nav rail folds into a top bar; Menu and Quote pull down full screen -->
 <header class="tbar" id="tbar">
-  <a class="tb-logo" href="#overview" aria-label="Modularix, back to top"><img src="img/logo.png" alt="Modularix" width="112" height="27"></a>
+  <a class="tb-logo" href="#overview" aria-label="Modularix, back to top"><img src="img/logo.webp" alt="Modularix" width="112" height="27"></a>
   <button type="button" class="tb-btn" id="tbMenu" aria-expanded="false" aria-controls="pMenu"><span class="t-o">Menu</span><span class="t-c">Close</span></button>
   <button type="button" class="tb-btn tb-q" id="tbQuote" aria-expanded="false" aria-controls="pQuote"><span class="t-o"><span class="lg">Get a q</span><span class="sm">Q</span>uote</span><span class="t-c">Close</span></button>
 </header>
@@ -862,7 +910,7 @@ html.lean .pw-view::before{display:none}
 </div>
 
 <aside class="navrail" id="navrail">
-  <a class="brand" href="#overview" aria-label="Modularix, back to top"><img src="img/logo.png" alt="Modularix" width="140" height="34"></a>
+  <a class="brand" href="#overview" aria-label="Modularix, back to top"><img src="img/logo.webp" alt="Modularix" width="140" height="34"></a>
   <nav class="nav" aria-label="Sections">
     <ol>
       <li class="ch" data-ch="overview"><a href="#overview" data-to="what"><span class="no">00</span>Overview</a>
@@ -897,6 +945,7 @@ html.lean .pw-view::before{display:none}
           <option>Not sure yet</option><option>Legacy</option><option>AI &amp; HPC Ready</option><option>Expandable</option><option>EMSEC Ready</option><option>Custom</option><option>Power &amp; Cooling Skids</option><option>Power Module</option></select><label for="f-sol">Solution</label></div>
         <div class="fld"><input id="f-company" name="company" autocomplete="organization" placeholder=" "><label for="f-company">Company</label></div>
         <div class="fld"><textarea id="f-msg" name="message" rows="1" placeholder=" "></textarea><label for="f-msg">Add details</label></div>
+        <p class="fpriv">We use these details only to answer your request. <a href="privacy.html">Privacy policy</a></p>
       </form>
     </div></div>
     <div class="slot">
@@ -917,8 +966,9 @@ html.lean .pw-view::before{display:none}
     <p class="cue">Scroll to explore ↓</p>
   </section>
 
-  <section class="ch-sec" data-ch="overview">
+  <section class="ch-sec" data-ch="overview" aria-labelledby="ov-h">
     <div class="col">
+      <h2 class="vh" id="ov-h">Overview</h2>
       <div class="sub" id="what" data-t=".18">
         <p class="eyebrow">About Modularix · Who we are</p>
         <h3>What is Modularix</h3>
@@ -1078,10 +1128,13 @@ html.lean .pw-view::before{display:none}
       <header><p class="eyebrow">Let's talk</p><h2>Get in touch</h2>
         <p class="intro">Ready to build the infrastructure of tomorrow? Let's talk.</p></header>
       <dl><dt>Email</dt><dd><a href="mailto:office@modularix.com">office@modularix.com</a></dd><dt>Phone</dt><dd><a href="tel:+40722598251">+40 722 598 251</a></dd><dt>Office</dt><dd>Bucharest, Romania</dd></dl>
-      <div class="foot">
+      <footer class="foot">
+        <nav class="legal" aria-label="Legal">
+          <a href="privacy.html">Privacy policy</a><a href="cookies.html">Cookie policy</a><a href="terms.html">Terms of use</a><a href="legal.html">Legal notice</a><a href="https://anpc.ro/ce-este-sal/" target="_blank" rel="noopener">ANPC · SAL</a>
+        </nav>
         <p>© 2026 Modularix. A Synotech company.</p>
         <p class="proto-note">Evidence: each build stage ends in a strip of real photos and drawings (the reference build, plus photos from the current Projects page); one opens as a plate in the exhibition, pinned to the part of the model it shows, and closes when you scroll on. Certifications are a register read off the scans themselves. Stage 4: the first screen plays a looping showreel on site (the module builds from the frame up, opens to show the systems going in, explodes into six layers and closes, then the campus grows around it) and hands back to the scroll build between Overview and Solutions. Stage 3: product drill-down. Stage 5: phones and tablets in portrait swap the nav rail for a top bar (logo, Menu, Quote; Menu and Quote pull down full screen); on phones the build plays in a band under it, without pins, and tablets in portrait keep the content and exhibition rails side by side. Red chips mark figures and claims being confirmed with Modularix (hidden for now; add ?review to the URL to show them); hover a chip for the reason. Telemetry readings are simulated demo values.</p>
-      </div>
+      </footer>
     </div>
   </section>
 </main>
@@ -1354,49 +1407,62 @@ html.lean .pw-view::before{display:none}
      intro:'Our Legacy solution helps organizations transform aging data center assets into modern, efficient systems. We assess, plan, and execute phased migrations that minimize downtime while maximizing performance, security, and cost efficiency.',
      mets:['≤ 2 MW','10 kW / rack','PUE < 1.5','8–16 wk','99.982 %'],
      specs:[['Cooling Type','Air Cooling (N+1)'],['Power Capacity','Up to 2 MW'],['Deployment Time','8–16 weeks'],['PUE','< 1.5'],['Tier Level','Tier II / III'],['Compliance','ISO 9001, ISO 27001'],['Rack Density','Up to 10 kW/rack'],['Availability','99.982% (Tier III)'],['Management','DCIM-ready']],
-     diff:'Cooling on this product is air-based (N+1) rather than chilled water.',other:['ai-hpc','expandable']},
+     diff:'Cooling on this product is air-based (N+1) rather than chilled water.',other:['ai-hpc','expandable'],
+     model:'20 ft module · air-cooled N+1'},
     {slug:'ai-hpc',id:'S-02',fam:'Module',name:'AI & HPC Ready',sel:'AI & HPC Ready',ref:true,
      tag:'High-density compute for AI and HPC workloads.',
      intro:'Deploy infrastructure optimized for GPU clusters, machine learning pipelines, and high-performance computing. Our AI & HPC Ready platform provides the power density, precision cooling, and low-latency networking that AI scale demands.',
      mets:['100 kW / rack','PUE < 1.2','400G IB','6–12 wk','99.999 %'],
      specs:[['Cooling Type','Liquid / Direct-to-Chip'],['Power Density','Up to 100 kW/rack*'],['Network','400G InfiniBand'],['PUE','< 1.2'],['GPU Support','NVIDIA H100 / A100 '+chip('#8','Catalog #8 / A12: prototype adds B300-class; confirm validated platforms')],['Deployment Time','6–12 weeks'],['Storage','NVMe / Parallel FS'],['Availability','99.999% (Tier IV) '+chip('#4','Catalog #4: 99.999 % is quoted with Tier IV; the reference build is Tier III Ready (A7)')],['Management','AI-optimized DCIM']],
      foot:'(*) Limited up to 300KW stand alone version or up to 1200KW only in combination with separate Power, Cooling Skids and/or Modules. '+chip('A9','A9: capacity per container to confirm (300 kW vs 1.5 MW in the launch article)'),
-     other:['skids','expandable'],up:{skids:'Take this module beyond 300 kW, up to 1,200 kW.'}},
+     model:'MX-AI/HPC-120 reference',other:['skids','expandable'],up:{skids:'Take this module beyond 300 kW, up to 1,200 kW.'}},
     {slug:'expandable',id:'S-03',fam:'Module',name:'Expandable',sel:'Expandable',
      tag:'Scale on demand — no interruptions, no limits.',
      intro:'Our Expandable platform is built for growth. Add compute, power, and cooling capacity incrementally as your needs evolve — without shutting down existing operations. From 100 kW to 10 MW, scale at your pace. '+chip('#9','Catalog #9: intro says 10 MW, spec says 10+ MW'),
      mets:['100 kW → 10+ MW','250 kW steps','20 kW / rack','Zero downtime','99.982 %'],
      specs:[['Starting Capacity','100 kW'],['Max Capacity','10+ MW'],['Expansion Increments','250 kW modules'],['Cooling','Air + Hybrid Liquid'],['Downtime During Expansion','Zero'],['Tier Level','Tier III / IV'],['Rack Density','Up to 20 kW/rack'],['Availability','99.982% (Tier III+)'],['Management','Full DCIM integration']],
-     diff:'Cooling on this product is air plus hybrid liquid.',other:['ai-hpc','custom']},
+     diff:'Cooling on this product is air plus hybrid liquid.',other:['ai-hpc','custom'],
+     model:'Two 250 kW modules · the next step dashed'},
     {slug:'emsec',id:'S-04',fam:'Module',name:'EMSEC Ready',sel:'EMSEC Ready',focus:'L2',
      tag:'Built for the extremes — harsh environments, zero compromise. '+chip('A1','A1: the name says emission security (TEMPEST); this copy describes harsh-environment hardening'),
      intro:'The Tempest line is engineered for deployment in demanding conditions: extreme temperatures, high humidity, seismic zones, and remote locations. Hardened enclosures, advanced thermal management, and military-grade protection ensure continuous uptime where others fail.',
      mets:['Hardened'],specs:null,
      need:'Content needed: the current site has no spec table for this product. Working assumption A1: a TEMPEST-shielded variant for government and defence, while IP65 and −25 … +45 °C apply to every module.',
-     other:['custom','ai-hpc']},
+     diff:'This module adds a welded shield inside the steel skin: shielded door, honeycomb vents, filtered power and fibre-only entry.',
+     model:'20 ft module · TEMPEST shield',other:['custom','ai-hpc']},
     {slug:'custom',id:'S-05',fam:'Module',name:'Custom',sel:'Custom',
      tag:'Fully bespoke infrastructure tailored to your exact requirements.',
      intro:'When off-the-shelf solutions don\'t fit, we build yours from scratch. Our engineering team works closely with you to design, validate, and deploy a data center infrastructure that matches your exact power, cooling, security, and compliance requirements.',
      mets:['50 kW – 50+ MW','Tier I – IV','N to 2N+1','24/7 SLA'],
      specs:[['Power Range','50 kW – 50+ MW'],['Cooling','Any (per design)'],['Tier Level','I – IV'],['Lead Time','Per engineering scope'],['Compliance','Full certification support'],['Support','24/7 SLA'],['Rack Density','Any (per design)'],['Redundancy','N, N+1, 2N, 2N+1'],['Management','Any DCIM platform']],
-     other:['expandable','skids']},
+     model:'One possible build · a two-storey stack',other:['expandable','skids']},
     {slug:'skids',id:'S-06',fam:'Add-on',name:'Power & Cooling Skids',sel:'Power & Cooling Skids',focus:'PC',
      tag:'Pre-engineered power and cooling modules — rapid deployment, plug-and-play integration.',
      intro:'Our Power and Cooling Skids are factory-built, fully tested units that integrate seamlessly with existing data center infrastructure. From UPS and PDU assemblies to precision chiller and cooling tower skids, each system is engineered to your exact electrical and thermal load requirements — delivered ready to commission.',
      mets:['≤ 5 MVA','≤ 2 MW / unit','PUE < 1.3','FAT included','8–16 wk'],
      cols:['Power Skids','Cooling Skids'],
      specs:[['Power Range','100 kVA – 5 MVA','—'],['Cooling Capacity','Up to 2 MW / unit '+chip('A11','A11: cooling rows in the power-skid column look like a copy error'),'Up to 2 MW / unit'],['Cooling Type','Air / Chilled Water / Adiabatic '+chip('A11','A11: cooling row in the power-skid column'),'Air / Chilled Water / Adiabatic'],['Supply Temp','—','12–18 °C'],['Delta T','—','5–10 K'],['PUE','< 1.3','< 1.3'],['Refrigerant','—','R410A / R32 / R744 '+chip('#7','Catalog #7: R410A is being phased down under EU F-gas rules; the reference build uses R454B')],['IP Rating','—','IP54'],['Factory Test','FAT included','—'],['Redundancy','N+1 / 2N','—'],['Monitoring','Remote SCADA','Remote SCADA'],['Standards','IEC 62271 / EN 60439 '+chip('#7','Catalog #7: EN 60439 is superseded by EN 61439'),'—'],['Lead Time','8–14 weeks','10–16 weeks']],
-     other:['ai-hpc','power-module']},
+     model:'Power skid + two cooling skids · module dashed',other:['ai-hpc','power-module']},
     {slug:'power-module',id:'S-07',fam:'Add-on',name:'Power Module',sel:'Power Module',focus:'L3',
      tag:'Scalable, rack-mounted power units engineered for precision and reliability.',
      intro:'Modularix Power Modules are self-contained, factory-tested units that deliver clean, reliable power from 10 kW to 1 MW. Designed for seamless integration into existing data centre racks or standalone cabinets, each module ships pre-wired with built-in monitoring and optional battery backup — ready to commission on arrival.',
      mets:['10 kW – 1 MW','96.5 %','19" rack','N+1 hot-swap','4–8 wk'],
      specs:[['Output Power','10 kW – 1 MW'],['Input Voltage','3-phase 400V / 480V'],['Output Voltage','48V DC / 400V AC'],['Efficiency','Up to 96.5 %'],['Battery Backup','Optional (VRLA / Li-Ion)'],['Form Factor','19" rack / cabinet'],['Redundancy','N+1 hot-swap'],['Standards','IEC 61439 / EN 62040'],['Lead Time','4–8 weeks']],
-     other:['skids','legacy']}
+     model:'Power cabinets in a 40 ft enclosure',other:['skids','legacy']}
   ];
   const BY=Object.fromEntries(PRODUCTS.map(p=>[p.slug,p]));
   const LBY=Object.fromEntries(LAYERS.map(l=>[l.k,l]));
+  /* structured data for search: the solutions as products, from the same data as the sheets (review chips stripped) */
+  { const txt=h=>{ const d=document.createElement('div'); d.innerHTML=h; d.querySelectorAll('.chk').forEach(c=>c.remove()); return d.textContent.replace(/\s+/g,' ').trim(); };
+    const ld=document.createElement('script'); ld.type='application/ld+json';
+    ld.textContent=JSON.stringify({'@context':'https://schema.org','@type':'ItemList',name:'Modularix solutions',itemListElement:PRODUCTS.map((p,i)=>({'@type':'ListItem',position:i+1,
+      item:{'@type':'Product',name:'Modularix '+p.name,url:'https://modularix.world/#'+p.slug,sku:p.id,category:p.fam==='Add-on'?'Data centre add-on':'Modular data centre',
+        brand:{'@type':'Brand',name:'Modularix'},manufacturer:{'@id':'https://modularix.world/#org'},description:txt(p.intro||p.tag),
+        additionalProperty:(p.specs||[]).map(([k,v])=>({'@type':'PropertyValue',name:txt(k),value:txt(v)}))}}))});
+    document.head.appendChild(ld); }
   const FOCUS_NAME={PC:'Power + Cooling'};
+  // the other solutions' 3D models are drawn from their renders on the current site and the project photos, not from drawings
+  const MCHIP=chip('3D','Illustrative 3D model, drawn from this product\'s render on modularix.world and the project photos; layout, counts and sizes to confirm with Modularix');
 
   function sheetHTML(p){
     const i=PRODUCTS.indexOf(p), isAdd=p.fam==='Add-on';
@@ -1408,12 +1474,12 @@ html.lean .pw-view::before{display:none}
           <div class="ld"><div><ul>${l.s.map(s=>`<li>${s}</li>`).join('')}</ul>${l.x?`<p class="lx">${l.x}</p>`:''}</div></div></li>`).join('')}</ol></section>`;
     } else if(!isAdd){
       layers=`<section class="sh-sec sh-layers"><h3>Built on the same six layers</h3>
-        <p class="sh-p">Every module is built like the MX-AI/HPC-120 reference build, sized per project. ${p.diff||''} ${chip('A8','A8: reference build publication and per-product variants to confirm')}</p>
+        <p class="sh-p">Every module is built like the MX-AI/HPC-120 reference build, sized per project. ${p.diff||''} ${chip('A8','A8: reference build publication and per-product variants to confirm')} ${MCHIP}</p>
         <div class="lchips">${LAYERS.map(l=>`<button type="button" class="ly mini" data-l="${l.k}" aria-pressed="false"><span class="lk">${l.k}</span>${l.n}</button>`).join('')}</div></section>`;
     } else {
       const ks=p.focus==='PC'?['L3','L4']:['L3'];
       layers=`<section class="sh-sec sh-layers"><h3>Where it connects</h3>
-        <p class="sh-p">Add-ons extend a module's ${p.focus==='PC'?'power and cooling':'power'}, or add capacity to an existing site. ${chip('A3','A3: add-ons are also sold standalone to existing sites')}</p>
+        <p class="sh-p">Add-ons extend a module's ${p.focus==='PC'?'power and cooling':'power'}, or add capacity to an existing site. ${chip('A3','A3: add-ons are also sold standalone to existing sites')} ${MCHIP}</p>
         <div class="lchips">${ks.map(k=>`<button type="button" class="ly mini" data-l="${k}" aria-pressed="false"><span class="lk">${k}</span>${LBY[k].n} in the module</button>`).join('')}</div></section>`;
     }
     let tech;
@@ -1443,7 +1509,7 @@ html.lean .pw-view::before{display:none}
         <p class="sh-contact"><a href="mailto:office@modularix.com">office@modularix.com</a><a href="tel:+40722598251">+40 722 598 251</a></p></section>
       <section class="sh-sec"><h3>Other solutions</h3><div class="sol">${others}</div></section>
       <div class="sh-more" aria-hidden="true">Scroll ↓</div></div>
-      <div class="pw-view" aria-hidden="true"><p class="pw-hint">${p.ref?'Scroll to take it apart':'Assembled · MX-AI/HPC-120 reference'}</p>
+      <div class="pw-view" aria-hidden="true"><p class="pw-hint">${p.ref?'Scroll to take it apart':'Assembled · '+p.model}</p>
         <div class="pcall"><span id="pc-p">${p.id} · ${p.name}</span><span id="pc-l"></span><span id="pc-h"></span></div></div></div>`;
   }
 
@@ -1489,10 +1555,11 @@ html.lean .pw-view::before{display:none}
     const first=!prod; prod=p; if(from) opener=from;
     sheet.innerHTML=sheetHTML(p); sheet.scrollTop=0; manual=null; delete sheet.dataset.f;
     document.body.classList.add('prod'); sheet.setAttribute('aria-hidden','false');
-    MX.prod.on=1; pwScroll();
+    MX.prod.slug=p.slug; MX.prod.on=1; pwScroll();
     $('t-ch').textContent=p.name; $('t-sheet').textContent=p.id;
     navProduct(p); reveal();
-    if(push) try{history.pushState({p:slug},'','#'+slug);}catch(e){}
+    if(push) try{history[first?'pushState':'replaceState']({p:slug},'','#'+slug);}catch(e){}
+    syncInert();
     setTimeout(()=>sheet.querySelector('h2').focus({preventScroll:true}),first&&!reduced?250:0);
   }
   function closeProduct({push=true,focusBack=true}={}){
@@ -1500,6 +1567,7 @@ html.lean .pw-view::before{display:none}
     document.body.classList.remove('prod'); sheet.setAttribute('aria-hidden','true');
     MX.prod.on=0; MX.prod.focus=null;
     if(push) try{history.replaceState(null,'',location.pathname+location.search);}catch(e){}
+    syncInert();
     reveal(); current=null; active(); lastB=-1;
     if(focusBack&&opener) opener.focus({preventScroll:true}); opener=null;
   }
@@ -1581,11 +1649,12 @@ html.lean .pw-view::before{display:none}
      (Solutions lists the products themselves); the quote panel holds the rail's form, moved over while the layout is compact */
   const panels={menu:$('pMenu'),quote:$('pQuote')}, pBtns={menu:$('tbMenu'),quote:$('tbQuote')};
   let pOpen=null;
+  function syncInert(){ document.querySelector('main').inert=!!pOpen||(!!prod&&!isMobile()); sheet.inert=!!pOpen; MX.wake&&MX.wake(); }
   function setPanel(k,{focus=true}={}){
     const prev=pOpen; pOpen=k||null;
     for(const n in panels){ const on=n===pOpen; panels[n].classList.toggle('open',on); panels[n].setAttribute('aria-hidden',!on); pBtns[n].setAttribute('aria-expanded',on); }
     document.body.classList.toggle('pulled',!!pOpen);
-    document.querySelector('main').inert=sheet.inert=!!pOpen;
+    syncInert();
     if(pOpen){ if(pOpen!==prev) panels[pOpen].scrollTop=0; if(pOpen==='menu') markMenu(); if(focus) panels[pOpen].focus({preventScroll:true}); }
     else if(prev&&focus) pBtns[prev].focus({preventScroll:true});
   }
@@ -1768,13 +1837,19 @@ html.lean .pw-view::before{display:none}
     }
     rlTicks.forEach((t,i)=>t.style.setProperty('--v',i<r.i?1:i===r.i?r.u.toFixed(3):0));
   }
-  function frame(){
+  const glCv=document.getElementById('gl'), railBg=document.querySelector('.railbg');
+  let fLast=0;
+  function frame(now=performance.now()){
     requestAnimationFrame(frame);
+    if(now-fLast<15.5) return; fLast=now; /* 60 fps at most, in step with the engine */
+    const cam=window.MX.camera;
+    if(cam) frameCam(cam);
     reelTele();
     buildProgress();
-    const cam=window.MX.camera; if(!cam) return;
-    const cv=document.getElementById('gl'), W=cv.clientWidth||innerWidth, H=cv.clientHeight||innerHeight;
-    const nav=rail.getBoundingClientRect().width, content=document.querySelector('.railbg').getBoundingClientRect().width;
+  }
+  function frameCam(cam){
+    const W=glCv.clientWidth||innerWidth, H=glCv.clientHeight||innerHeight;
+    const nav=rail.getBoundingClientRect().width, content=railBg.getBoundingClientRect().width;
     /* where the module's centre lands on screen (cx, cy) and how large it is (sc): beside the text on the page,
        centred and scaled down into the clear pane while the product window is open */
     /* narrow exhibition (tablets in portrait, small laptops): the camera is framed for a rail about .8 × the height wide,
@@ -1797,18 +1872,20 @@ html.lean .pw-view::before{display:none}
 
   function onScroll(){reveal();active();}
   addEventListener('scroll',onScroll,{passive:true});
-  addEventListener('resize',()=>{measure();reveal();current=null;active();});
+  let rzF=0;
+  addEventListener('resize',()=>{ if(rzF) return; rzF=requestAnimationFrame(()=>{rzF=0; measure();reveal();current=null;active();}); });
   addEventListener('load',measure);
   document.fonts&&document.fonts.ready.then(()=>{measure();current=null;active();});
   measure(); reveal(); active(); frame();
   { const s=location.hash.slice(1); if(BY[s]) openProduct(s,{push:false}); }
 
   /* ---------- 3D engine (from the Dictum Labs prototype) */
-  MX.loadScripts(['vendor/three.global.min.js','engine/gl-kit.js?v=11','engine/container-model.js?v=11','engine/world-home.js?v=13'])
-    .catch(err=>{
-      console.error(err); doc.classList.add('no-gl');
-      const n=document.getElementById('glnote'); n.hidden=false; n.textContent='3D scene unavailable: a script failed to load ('+(err&&err.target&&err.target.src||err)+')';
-    });
+  const noGL=msg=>{ doc.classList.add('no-gl'); const n=document.getElementById('glnote'); n.hidden=false; n.textContent=msg; };
+  const hasGL=(()=>{ try{ return !!document.createElement('canvas').getContext('webgl2'); }catch(e){ return false; } })();
+  if(!hasGL) noGL('3D scene unavailable: this browser has WebGL 2 turned off or unsupported.');
+  else MX.loadScripts(['vendor/three.global.min.js','engine/gl-kit.js?v=12','engine/container-model.js?v=11','engine/product-models.js?v=2','engine/world-home.js?v=15'])
+    .then(()=>{ if(!MX.camera) noGL('3D scene unavailable: WebGL could not start.'); })
+    .catch(err=>{ console.error(err); noGL('3D scene unavailable: a script failed to load ('+(err&&err.target&&err.target.src||err)+')'); });
 })();
 </script>
 
