@@ -208,6 +208,7 @@ body.gl-ready #gl{opacity:1}
 .cta .done{font-size:12px;color:var(--faint);line-height:1.45}
 .ctabtn{display:flex;justify-content:space-between;align-items:center;font:600 16px var(--hd);background:var(--blue);color:#03112b;border:0;padding:14px 16px;cursor:pointer;text-align:left}
 .ctabtn::after{content:"→";font-weight:500;transition:transform .3s}
+#ctaBtn{background:var(--blue2)}
 /* one slot, two buttons: the CTA closed, Send open (ink instead of blue), cross-faded in place */
 .cta .slot{display:grid}
 .cta .slot > *{grid-area:1/1;transition:opacity .3s var(--ease),visibility 0s}
@@ -426,13 +427,17 @@ main{position:relative;z-index:3}
    (--hf) as the visitor leaves the first screen, so its edge never scrolls into view */
 .hero::before{content:"";position:fixed;top:0;height:100vh;left:0;width:min(72vw,980px);z-index:-1;pointer-events:none;opacity:var(--hf,1);
   background:linear-gradient(90deg,rgba(5,10,20,.82) 0%,rgba(5,10,20,.55) 42%,rgba(5,10,20,0) 100%)}
+.hero .hcta{margin-top:30px}
+.hero .ghost{display:inline-flex;align-items:center;gap:14px;box-sizing:border-box;height:50px;padding:0 16px;font-size:16px;text-decoration:none;background:rgba(5,10,20,.5)}
 .hero .cue{margin-top:38px;font:400 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
 /* desktop first screen: copy sits top left under the logo, on the logo/CTA line at the left edge, and fades out before
    the rails slide over it; the scroll cue shares the row of the quote button (same height, centred on it) */
 @media (min-width:701px) and (min-height:501px),(min-width:961px){
   .hero{justify-content:flex-start;padding:calc(28px + 34px + 8vh) 0 0 22px}
   .hero > .eyebrow,.hero > h1,.hero > .lead{opacity:var(--hf,1);transform:translateY(calc((1 - var(--hf,1)) * -18px))}
-  .hero .cue{position:absolute;bottom:24px;left:calc(var(--nav) + var(--pad));height:48px;margin:0;display:flex;align-items:center;opacity:var(--hf,1)}
+  .hero .hcta{position:absolute;bottom:24px;left:calc(var(--nav) + var(--pad));margin:0;opacity:var(--hf,1);visibility:visible}
+  html.past-hero .hero .hcta{visibility:hidden}
+  .hero .cue{position:absolute;bottom:24px;left:calc(var(--nav) + var(--pad) + 220px);height:50px;margin:0;display:flex;align-items:center;opacity:var(--hf,1)}
 }
 .eyebrow{font:400 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:#8fb2da}
 .col{margin-left:var(--nav);width:var(--content);box-sizing:border-box;padding:0 var(--pad)}
@@ -978,6 +983,7 @@ html.lean .pw-view::before{display:none}
     <p class="eyebrow">Infrastructure Solutions</p>
     <h1>Infrastructure for the Future</h1>
     <p class="lead">Modularix delivers next-generation data center solutions: secure, scalable, and AI-ready for tomorrow's enterprise.</p>
+    <p class="hcta"><a class="ghost" href="#solutions">Explore solutions <span aria-hidden="true">→</span></a></p>
     <p class="cue">Scroll to explore ↓</p>
   </section>
 
@@ -1832,7 +1838,7 @@ html.lean .pw-view::before{display:none}
     if(!can||!zoomOn) plFrame.classList.remove('zooming');
   }
   function zoomAt(e){
-    if(!plFrame.classList.contains('zoom-on')||e.target.closest('.pl-zt')){ plFrame.classList.remove('zooming'); return; }
+    if(!plFrame.classList.contains('zoom-on')){ plFrame.classList.remove('zooming'); return; }
     const z=plFrame.querySelector('.pl-zm img'), r=plFrame.getBoundingClientRect(), w=z.naturalWidth, h=z.naturalHeight;
     const u=clamp((e.clientX-r.left)/r.width,0,1), v=clamp((e.clientY-r.top)/r.height,0,1);
     z.style.transform=`translate(${((r.width-w)*u).toFixed(1)}px,${((r.height-h)*v).toFixed(1)}px)`;
