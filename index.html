@@ -435,9 +435,10 @@ main{position:relative;z-index:3}
 @media (min-width:701px) and (min-height:501px),(min-width:961px){
   .hero{justify-content:flex-start;padding:calc(28px + 34px + 8vh) 0 0 22px}
   .hero > .eyebrow,.hero > h1,.hero > .lead{opacity:var(--hf,1);transform:translateY(calc((1 - var(--hf,1)) * -18px))}
-  .hero .hcta{position:absolute;bottom:24px;left:calc(var(--nav) + var(--pad));margin:0;opacity:var(--hf,1);visibility:visible}
-  html.past-hero .hero .hcta{visibility:hidden}
-  .hero .cue{position:absolute;bottom:24px;left:calc(var(--nav) + var(--pad) + 220px);height:50px;margin:0;display:flex;align-items:center;opacity:var(--hf,1)}
+  /* Explore solutions sits 12 px right of the quote button (the rail's 22 px inset less 10), the scroll cue after it */
+  .hero .hrow{position:absolute;bottom:24px;left:calc(var(--nav) - 10px);display:flex;align-items:center;gap:32px;opacity:var(--hf,1)}
+  html.past-hero .hero .hrow{visibility:hidden}
+  .hero .hcta,.hero .cue{margin:0}
 }
 .eyebrow{font:400 11px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:#8fb2da}
 .col{margin-left:var(--nav);width:var(--content);box-sizing:border-box;padding:0 var(--pad)}
@@ -983,8 +984,8 @@ html.lean .pw-view::before{display:none}
     <p class="eyebrow">Infrastructure Solutions</p>
     <h1>Infrastructure for the Future</h1>
     <p class="lead">Modularix delivers next-generation data center solutions: secure, scalable, and AI-ready for tomorrow's enterprise.</p>
-    <p class="hcta"><a class="ghost" href="#solutions">Explore solutions <span aria-hidden="true">→</span></a></p>
-    <p class="cue">Scroll to explore ↓</p>
+    <div class="hrow"><p class="hcta"><a class="ghost" href="#solutions">Explore solutions <span aria-hidden="true">→</span></a></p>
+      <p class="cue">Scroll to explore ↓</p></div>
   </section>
 
   <section class="ch-sec" data-ch="overview" aria-labelledby="ov-h">
@@ -1224,7 +1225,8 @@ html.lean .pw-view::before{display:none}
     /* phones: the scene contracts from full screen to the band over the first ~60 % of a viewport */
     doc.style.setProperty('--ex',all||!isMobile()?0:(1-smooth(clamp(scrollY/(vh*.6),0,1))).toFixed(4));
   }
-  rail.addEventListener('focusin',()=>{peek=true;rail.classList.add('peek');reveal();});
+  /* keyboard focus only: a click also focuses the link, and the rails would then stay out over the first screen */
+  rail.addEventListener('focusin',e=>{ if(!e.target.matches(':focus-visible')) return; peek=true;rail.classList.add('peek');reveal();});
   rail.addEventListener('focusout',e=>{if(!rail.contains(e.relatedTarget)){peek=false;rail.classList.remove('peek');reveal();}});
 
   /* ---------- active section, nav expansion, red marker */
@@ -1771,7 +1773,7 @@ html.lean .pw-view::before{display:none}
     const it=pl.items[pl.i], p=it.p, isDoc=p.kind==='doc', file=isDoc?p.file:'img/ev/'+p.id;
     plate.className='plate open'+(p.sys?' '+p.sys:''); leader.setAttribute('class','leader'+(p.sys?' '+p.sys:''));
     $('pl-tag').textContent=it.tag; $('pl-ctx').textContent=it.ctx;
-    plFrame.className='pl-frame'+(isDoc&&file?' scan':'');
+    plFrame.className='pl-frame'+(isDoc&&file?' scan':''); zoomOn=false;
     plFrame.style.setProperty('--ar',p.w?p.w+'/'+p.h:/^se-/.test(p.id)?'1400/995':'1/1.414');
     plFrame.innerHTML=file?`<img src="${file}.webp" alt="${esc(p.alt||p.name+' certificate, '+p.std+', '+p.issuer)}"><span class="pl-zm" aria-hidden="true"><img src="${file}.webp" alt=""></span>`+
       `<button type="button" class="pl-zt" aria-pressed="${zoomOn}" aria-label="Zoom" hidden><svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="6.8" cy="6.8" r="4.8"/><path d="M10.4 10.4L14.5 14.5M4.6 6.8h4.4"/><path class="zi" d="M6.8 4.6v4.4"/></svg></button>`
@@ -1826,10 +1828,10 @@ html.lean .pw-view::before{display:none}
     if(!can){ e.preventDefault(); scrollBy(0,d); }
   },{passive:false});
   $('plX').addEventListener('click',()=>closePlate());
-  /* zoom: the frame's toggle turns it on and off (the choice holds from plate to plate); while on, the pointer's place
+  /* zoom: the frame's toggle turns it on and off (each image starts with it off); while on, the pointer's place
      in the frame picks the same place in the natural-size image */
   const ZOOM_MIN=1.2;
-  let zoomOn=false;
+  let zoomOn=false; /* off again for every image */
   /* the toggle shows only when the file is clearly bigger than the photo as shown (contained in the frame) */
   function zoomOffer(){
     const z=plFrame.querySelector('.pl-zm img'), b=plFrame.querySelector('.pl-zt'); if(!z||!b) return;
