@@ -1,5 +1,5 @@
 /* Modularix — inner pages (Company, legal): the nav rail as on the home page, a reading rail twice as wide,
-   and a drawing field in the space to the right. Shared by company.html, privacy.html, cookies.html, terms.html and legal.html. */
+   and on the Company page a drawing field in the space to the right. Shared by company.html, privacy.html, cookies.html, terms.html and legal.html. */
 
 /* Fonts: self-hosted Latin subsets of the variable fonts (SIL Open Font Licence 1.1), so no visitor data goes to Google */
 @font-face{font-family:"Outfit";font-style:normal;font-weight:400 600;font-display:swap;src:url(../fonts/outfit-latin-wght.woff2) format("woff2")}
@@ -29,6 +29,7 @@
   --field:clamp(140px,22.7vw,560px);
   --content:min(calc(100vw - var(--nav) - var(--field)),1240px);
   --pad:clamp(36px,3.4vw,56px);
+  --navtop:calc(28px + 34px + 44px); /* where the nav list starts: brand padding + logo + nav padding */
   --sy:0;
   --ease:cubic-bezier(.2,.65,.2,1);
 }
@@ -84,6 +85,11 @@ a{color:inherit}
 .subs a.on{color:#fff}
 .nav a:hover{color:#fff}
 .nav .pi{display:none}
+/* legal pages: every legal page listed under its own label after the chapters, smaller than a chapter */
+.nav .lgl{display:flex;align-items:center;gap:8px;margin:22px 22px 4px;font:400 10px var(--mono);letter-spacing:.16em;text-transform:uppercase;color:#8fb2da}
+.nav .lgl::after{content:"";flex:1;height:1px;background:rgba(150,190,240,.3)}
+.nav > ol > li.lg{margin-bottom:0}
+.ch.lg > a{font-size:16px;padding-block:6px}
 .marker{position:absolute;right:0;top:0;width:12px;height:12px;background:var(--red);opacity:0;
   transition:top .45s var(--ease),height .45s var(--ease),width .45s var(--ease),opacity .3s}
 
@@ -185,7 +191,7 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
 .facts{margin-inline:0}
 
 /* sections: editorial two-column grid. Label column left (sticky while its section scrolls), body right */
-.sec{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.2fr);column-gap:clamp(32px,4vw,72px);padding:clamp(72px,11vh,128px) 0 0;scroll-margin-top:24px}
+.sec{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2.2fr);column-gap:clamp(32px,4vw,72px);padding:clamp(72px,11vh,128px) 0 0;scroll-margin-top:calc(var(--navtop) - clamp(72px,11vh,128px))}
 .sec > .lab{position:sticky;top:40px;align-self:start}
 .sec > .lab .no{display:block;font:400 10.5px var(--mono);letter-spacing:.14em;color:var(--faint)}
 .sec > .lab h2{margin-top:12px;font-size:clamp(30px,2.6vw,42px)}
@@ -248,7 +254,7 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
 .close .btns{display:flex;gap:10px;flex-wrap:wrap}
 .ghost{font:600 15px var(--hd);background:none;color:var(--ink);border:1px solid var(--line3);padding:13px 16px;text-decoration:none}
 .ghost:hover{border-color:var(--ink)}
-.foot{padding:56px 0 64px;display:flex;justify-content:space-between;gap:20px;font-size:12.5px;color:var(--faint)}
+.foot{padding:56px 0 22vh;display:flex;justify-content:space-between;gap:20px;font-size:12.5px;color:var(--faint)}
 .foot a{text-decoration:none}
 /* legal pages: long-form text in the body column */
 .doc .phead .need{max-width:62ch;margin-top:22px}

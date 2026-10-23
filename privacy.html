@@ -26,19 +26,6 @@
 <div class="railbg" aria-hidden="true"></div>
 <div class="edge" aria-hidden="true"></div>
 
-<!-- drawing field: decorative, drawn by the script from the field's own size -->
-<div class="field" aria-hidden="true">
-  <svg id="art"></svg>
-  <i class="cnr tl"></i><i class="cnr tr"></i><i class="cnr bl"></i><i class="cnr br"></i><i class="xh"></i>
-  <div class="coord"><span>Layer <em id="f-ln">01</em> / 06 · <em id="f-lnm">Structure</em></span><span>Y <em id="f-y">0000</em></span></div>
-  <div class="tblock">
-    <div><span>Dwg</span><em>MX-WEB-L1</em></div>
-    <div><span>Rev</span><em>A</em></div>
-    <div><span>Sheet</span><em>1 / 4</em></div>
-    <div class="wide"><span>Scale NTS</span><span id="f-sec">Privacy policy</span></div>
-  </div>
-</div>
-
 <!-- compact: the nav rail folds into a top bar -->
 <header class="tbar">
   <a class="tb-logo" href="index.html" aria-label="Modularix, home"><img src="img/logo.webp" alt="Modularix" width="112" height="27"></a>
@@ -68,8 +55,12 @@
       <li class="ch"><a href="index.html#company"><span class="no">04</span>Company</a>
         <div class="subs"><ol><li><a href="index.html#about">About</a></li><li><a href="index.html#factory">Factory</a></li><li><a href="index.html#news">News</a></li></ol></div></li>
       <li class="ch"><a href="index.html#contact"><span class="no">05</span>Contact</a></li>
-      <li class="ch on open" data-here="Privacy policy"><a href="#top"><span class="no">§</span>Privacy policy</a>
+      <li class="lgl" aria-hidden="true">Legal</li>
+      <li class="ch lg on open" data-here="Privacy policy"><a href="#top" aria-current="page"><span class="no">§ 1</span>Privacy policy</a>
         <div class="subs"><ol><li><a href="#who">Who we are</a></li><li><a href="#collect">What we collect</a></li><li><a href="#use">Why we use it</a></li><li><a href="#share">Who sees it</a></li><li><a href="#where">Where it is kept</a></li><li><a href="#keep">How long we keep it</a></li><li><a href="#rights">Your rights</a></li><li><a href="#changes">Changes</a></li></ol></div></li>
+      <li class="ch lg"><a href="cookies.html"><span class="no">§ 2</span>Cookie policy</a></li>
+      <li class="ch lg"><a href="terms.html"><span class="no">§ 3</span>Terms of use</a></li>
+      <li class="ch lg"><a href="legal.html"><span class="no">§ 4</span>Legal notice</a></li>
     </ol>
   </nav>
   <div class="cta" id="cta">
@@ -188,7 +179,7 @@
         </nav>
         <p>© 2026 Modularix. A Synotech company.</p>
       </div>
-      <p class="proto-note">Legal page built on the Company page template. Add ?review to the URL to show the red review chips.</p>
+      <p class="proto-note">Legal page: the Company page template without the drawing field. Add ?review to the URL to show the red review chips.</p>
     </footer>
   </div>
 </main>

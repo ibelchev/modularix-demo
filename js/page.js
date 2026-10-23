@@ -1,4 +1,4 @@
-/* Modularix — inner pages: nav marker and scroll spy, quote CTA, compact menu, clock, drawing field. Shared by company.html and the legal pages. */
+/* Modularix — inner pages: nav marker and scroll spy, quote CTA, compact menu, clock, drawing field (Company only). Shared by company.html and the legal pages. */
 (function(){
   'use strict';
   const doc=document.documentElement;
@@ -17,12 +17,16 @@
     else { marker.style.width='12px'; marker.style.height='12px'; marker.style.top=(ar.top-rr.top+ar.height/2-6)+'px'; }
     marker.style.opacity=1;
   }
+  /* a nav pick stays marked until the visitor scrolls on their own (a short last section would otherwise take the marker) */
+  let pin=null;
+  subs.forEach(s=>s.a.addEventListener('click',()=>{ pin=s; active(); }));
+  ['wheel','touchstart','keydown'].forEach(t=>addEventListener(t,()=>{ if(pin){ pin=null; active(); } },{passive:true}));
   function active(){
-    const line=innerHeight*.42; let hit=null;
-    for(const s of subs) if(s.el.getBoundingClientRect().top<=line) hit=s;
+    const line=innerHeight*.42; let hit=pin;
+    if(!pin) for(const s of subs) if(s.el.getBoundingClientRect().top<=line) hit=s;
     if(hit!==cur){ cur=hit; subs.forEach(s=>s.a.classList.toggle('on',s===hit)); placeMarker();
       pmSubs.forEach(a=>a.classList.toggle('on',!!hit&&a.getAttribute('href')===hit.a.getAttribute('href')));
-      document.getElementById('f-sec').textContent=hit?hit.el.dataset.sec:here.dataset.here; }
+      const fs=document.getElementById('f-sec'); if(fs) fs.textContent=hit?hit.el.dataset.sec:here.dataset.here; }
   }
 
   /* chapter rules and week bars draw in once a section enters */
@@ -61,6 +65,7 @@
   const pts=a=>a.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
 
   function build(){
+    if(!svg) return; /* legal pages have no drawing field */
     const r=svg.getBoundingClientRect(); fw=r.width; fh=r.height; svg.textContent=''; slabs=[];
     if(fw<60) return;
     svg.setAttribute('viewBox',`0 0 ${fw} ${fh}`);
@@ -98,8 +103,8 @@
   function draw(){
     const max=document.documentElement.scrollHeight-innerHeight, sy=scrollY, p=max>0?clamp(sy/max,0,1):0;
     doc.style.setProperty('--sy',Math.round(sy));
-    yRead.textContent=String(Math.round(sy)).padStart(4,'0');
     if(!slabs.length) return;
+    yRead.textContent=String(Math.round(sy)).padStart(4,'0');
     const [cx,cy]=dial.dataset.c.split(' ').map(Number);
     dial.setAttribute('transform',`rotate(${(-p*60).toFixed(2)} ${cx} ${cy})`);
     const s=slabs[0].s, th=.42, gap=1.2+p*2.6, n=slabs.length;
