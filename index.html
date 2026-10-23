@@ -590,6 +590,12 @@ html:not(.review) .chk,html:not(.review) .need{display:none!important}
 .ev .tg{position:absolute;left:0;right:0;bottom:0;padding:14px 6px 5px;font:500 9px/1 var(--mono);letter-spacing:.08em;color:var(--ink);
   background:linear-gradient(to top,rgba(5,10,20,.88),rgba(5,10,20,0))}
 .ev.on{border-color:var(--blue2);box-shadow:inset 0 0 0 1px var(--blue2)}
+/* project galleries: the current site's carousels, one row of thumbnails under each project */
+/* rows: thumbnails tucked under their own text (row gap off), more air below so a strip never reads as the next project's */
+.prj > li{row-gap:0;padding:16px 0 20px}
+.prj li .evs{grid-column:1/-1;margin-top:10px}
+.prj .evs ol{grid-template-columns:repeat(6,1fr);gap:4px}
+.prj .evs li{display:block;padding:0;border:0}
 .ev:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
 
 /* the plate: a drawing-sheet card in the exhibition's left half, stepping a little over the content rail's edge; the camera
@@ -918,7 +924,7 @@ html.lean .pw-view::before{display:none}
         <div class="subs"><ol><li class="base"><a href="#modules">Modules</a></li><li class="pi"><a href="#legacy" data-p="legacy">Legacy<span class="pid">S-01</span></a></li><li class="pi"><a href="#ai-hpc" data-p="ai-hpc">AI &amp; HPC Ready<span class="pid">S-02</span></a></li><li class="pi"><a href="#expandable" data-p="expandable">Expandable<span class="pid">S-03</span></a></li><li class="pi"><a href="#emsec" data-p="emsec">EMSEC Ready<span class="pid">S-04</span></a></li><li class="pi"><a href="#custom" data-p="custom">Custom<span class="pid">S-05</span></a></li><li class="base"><a href="#addons">Add-ons</a></li><li class="pi"><a href="#skids" data-p="skids">Power &amp; Cooling Skids<span class="pid">S-06</span></a></li><li class="pi"><a href="#power-module" data-p="power-module">Power Module<span class="pid">S-07</span></a></li></ol></div></li>
       <li class="ch" data-ch="build"><a href="#build"><span class="no">02</span>How it's built</a>
         <div class="subs"><ol><li><a href="#s-design">Design</a></li><li><a href="#s-frame">Frame</a></li><li><a href="#s-envelope">Envelope</a></li><li><a href="#s-systems">Systems</a></li><li><a href="#s-transport">Transport</a></li><li><a href="#s-live">Live</a></li></ol></div></li>
-      <li class="ch" data-ch="proof"><a href="#proof"><span class="no">03</span>Proof</a>
+      <li class="ch" data-ch="experience"><a href="#experience"><span class="no">03</span>Experience</a>
         <div class="subs"><ol><li><a href="#projects">Projects</a></li><li><a href="#certs">Certifications</a></li><li><a href="#partners">Partners</a></li></ol></div></li>
       <li class="ch" data-ch="company"><a href="#company"><span class="no">04</span>Company</a>
         <div class="subs"><ol><li><a href="#about">About</a></li><li><a href="#factory">Factory</a></li><li><a href="#news">News</a></li></ol></div></li>
@@ -1069,18 +1075,18 @@ html.lean .pw-view::before{display:none}
     </div>
   </section>
 
-  <!-- 03 PROOF -->
-  <section class="ch-sec" id="proof" data-ch="proof" data-t="6.8">
+  <!-- 03 EXPERIENCE -->
+  <section class="ch-sec" id="experience" data-ch="experience" data-t="6.8">
     <div class="col">
-      <header><p class="eyebrow">Track record</p><h2>Proof</h2>
+      <header><p class="eyebrow">Track record</p><h2>Experience</h2>
         <p class="intro">A selection of our most impactful infrastructure deployments worldwide. <span class="chk" title="A6: Synotech group projects, shown separately from Modularix">A6</span></p></header>
       <div class="sub" id="projects" data-t="7.1">
         <h3>Projects</h3>
-        <ul class="list">
-          <li><span>Deployed a 5MW modular data center for a leading European cloud provider, achieving Tier III certification within 14 weeks. <span class="chk" title="A7: certified vs Tier Ready">A7</span></span><small>#12892</small></li>
-          <li><span>Designed and built a distributed edge infrastructure network across 12 locations, enabling sub-10ms latency for real-time applications.</span><small>#32132</small></li>
-          <li><span>Engineered a high-density GPU compute facility with liquid cooling, supporting 2,000+ A100 GPUs for neural network training.</span><small>#77312</small></li>
-          <li><span>Constructed a classified-grade data center with multi-layer physical and cyber security, achieving ISO 27001 certification.</span><small>#73221</small></li>
+        <ul class="list prj">
+          <li data-prj="12892"><span>Deployed a 5MW modular data center for a leading European cloud provider, achieving Tier III certification within 14 weeks. <span class="chk" title="A7: certified vs Tier Ready">A7</span></span><small>#12892</small></li>
+          <li data-prj="32132"><span>Designed and built a distributed edge infrastructure network across 12 locations, enabling sub-10ms latency for real-time applications.</span><small>#32132</small></li>
+          <li data-prj="77312"><span>Engineered a high-density GPU compute facility with liquid cooling, supporting 2,000+ A100 GPUs for neural network training.</span><small>#77312</small></li>
+          <li data-prj="73221"><span>Constructed a classified-grade data center with multi-layer physical and cyber security, achieving ISO 27001 certification.</span><small>#73221</small></li>
         </ul>
       </div>
       <div class="sub" id="certs" data-t="7.6">
@@ -1210,12 +1216,16 @@ html.lean .pw-view::before{display:none}
   const links=[...document.querySelectorAll('.nav a')];
   const targets=links.map(a=>({a,el:document.getElementById(a.getAttribute('href').slice(1)),ch:a.closest('.ch'),sub:!!a.closest('.subs')})).filter(x=>x.el);
   const marker=document.getElementById('marker');
-  const CH_NAMES={overview:'Overview',solutions:'Solutions',build:"How it's built",proof:'Proof',company:'Company',contact:'Contact'};
+  const CH_NAMES={overview:'Overview',solutions:'Solutions',build:"How it's built",experience:'Experience',company:'Company',contact:'Contact'};
   let current=null;
+  /* a nav pick stays marked until the visitor scrolls on their own: a short last subsection (Who it's for) lands with
+     the next chapter already over the line, which would otherwise mark the wrong item */
+  let pin=null;
+  ['wheel','touchstart','keydown'].forEach(t=>addEventListener(t,()=>{ if(pin){ pin=null; active(); } },{passive:true}));
   function active(){
     if(prodOpen()) return;
-    const line=innerHeight*.42; let hit=targets[0];
-    for(const t of targets){ if(t.el.getBoundingClientRect().top<=line) hit=t; }
+    const line=innerHeight*.42; let hit=pin||targets[0];
+    if(!pin) for(const t of targets){ if(t.el.getBoundingClientRect().top<=line) hit=t; }
     if(hit!==current){
       current=hit;
       chItems.forEach(c=>{c.classList.toggle('open',c===hit.ch); c.classList.toggle('on',c===hit.ch);});
@@ -1617,6 +1627,7 @@ html.lean .pw-view::before{display:none}
     /* data-to: land somewhere other than the URL's own anchor (Overview keeps #overview but lands on its first content, not the hero) */
     const el=document.getElementById(a.dataset.to||a.getAttribute('href').slice(1)); if(!el) return;
     e.preventDefault(); try{history.pushState(null,'',a.getAttribute('href'));}catch(_){}
+    pin=targets.find(t=>t.a===a)||null; current=null; active();
     jumpTo(el);
   });
   /* the jump itself, also used by in-content CTAs that send the visitor elsewhere on the page (e.g. product sheet → Contact) */
@@ -1716,6 +1727,17 @@ html.lean .pw-view::before{display:none}
       `<li><button type="button" class="ev" data-i="${i}" aria-controls="plate" aria-label="${it.tag}: ${esc(it.p.cap)}"><img src="img/ev/${it.p.id}-s.webp" alt="" loading="lazy" decoding="async"><span class="tg">${it.tag}</span></button></li>`).join('')}</ol>`;
     sub.appendChild(box);
   }
+  /* project galleries: every photo of a project, in manifest order; they show other sites, so no pin on the model */
+  const prjSets={};
+  document.querySelectorAll('#projects [data-prj]').forEach(li=>{
+    const n=li.dataset.prj, items=prjSets[n]=IMG.photos.filter(p=>p.src==='#'+n&&p.gallery!==false).map((p,i)=>({tag:'#'+n+' · '+pad2(i+1),ctx:'Project #'+n+' · Gallery',p,owner:li,pin:false}));
+    if(!items.length) return;
+    const box=document.createElement('div'); box.className='evs'; box.dataset.prj=n;
+    box.setAttribute('aria-label',`Project #${n} gallery, ${items.length} photos`); box.setAttribute('role','group');
+    box.innerHTML=`<ol>${items.map((it,i)=>
+      `<li><button type="button" class="ev" data-i="${i}" aria-controls="plate" aria-label="Project #${n}, photo ${i+1}: ${esc(it.p.cap)}"><img src="img/ev/${it.p.id}-s.webp" alt="" loading="lazy" decoding="async"><span class="tg">${pad2(i+1)}</span></button></li>`).join('')}</ol>`;
+    li.appendChild(box);
+  });
   const certItems=IMG.certs.map((c,i)=>({tag:'C-'+pad2(i+1),ctx:'Certification · '+GRP[c.grp][0].replace('&amp;','&'),p:c,owner:$('certs')}));
   $('reg').innerHTML=Object.keys(GRP).map(g=>`<section class="reg-g"><h4>${GRP[g][0]}<small>${GRP[g][1]}</small></h4><p>${GRP[g][2]}</p><ol>${certItems.map((it,i)=>{
     const c=it.p; if(c.grp!==g) return ''; const [vl,vv]=validCell(c);
@@ -1741,7 +1763,7 @@ html.lean .pw-view::before{display:none}
         row('Issuer',p.issuer+(p.no!=='—'?' · No. '+p.no:''))+row('Issued',p.first+(p.recert?' · recertified '+p.recert:''))+row('Valid',p.valid)+
         row('Scope',p.scope)+row('Current site',p.site+' '+siteChip(p))+(p.withheld?row('Scan',chip('A21','A21: AGFR scan carries an engineer’s name, date of birth and CNP; not republished')):'')
       : row('Source',(p.src.startsWith('#')?`Project ${p.src} · Synotech group ${chip('A6','A6: Synotech group projects, shown separately from Modularix')}`:p.src)+' '+chipsOf(p))+
-        row('Shows',AN_NAME[p.anchor]||'—');
+        (it.pin===false?'':row('Shows',AN_NAME[p.anchor]||'—'));
     $('pl-n').textContent=(pl.i+1)+' / '+pl.items.length;
     pl.btns.forEach((b,i)=>b.classList.toggle('on',i===pl.i));
   }
@@ -1764,7 +1786,7 @@ html.lean .pw-view::before{display:none}
   document.querySelectorAll('.evs').forEach(box=>box.addEventListener('click',e=>{
     const b=e.target.closest('.ev'); if(!b) return; const i=+b.dataset.i, btns=[...box.querySelectorAll('.ev')];
     if(pl&&pl.btns===btns||pl&&pl.btns[0]===btns[0]&&pl.i===i){ closePlate(); return; }
-    openPlate(evSets[box.dataset.st],i,btns);
+    openPlate(box.dataset.prj?prjSets[box.dataset.prj]:evSets[box.dataset.st],i,btns);
   }));
   $('reg').addEventListener('click',e=>{
     const b=e.target.closest('.crt'); if(!b) return; const i=+b.dataset.i, btns=[...$('reg').querySelectorAll('.crt')];
@@ -1810,7 +1832,7 @@ html.lean .pw-view::before{display:none}
   addEventListener('resize',()=>{ plateOwnerGone(); if(pl) plateMode(); });
   /* leader: from the plate's right edge, level with the photo's middle, out and across to the pin */
   function drawLeader(){
-    const p=pl&&!isMobile()&&!doc.classList.contains('pl-full')&&MX.anchorAt&&pl.items[pl.i].p, a=p&&p.anchor&&MX.anchorAt(p.anchor);
+    const p=pl&&!isMobile()&&!doc.classList.contains('pl-full')&&MX.anchorAt&&pl.items[pl.i].pin!==false&&pl.items[pl.i].p, a=p&&p.anchor&&MX.anchorAt(p.anchor);
     if(!a){ leader.classList.remove('on'); return; }
     const cv=$('gl').getBoundingClientRect(), pr=plate.getBoundingClientRect(), fr=plFrame.getBoundingClientRect();
     const ax=cv.left+a.x, ay=cv.top+a.y, sx=pr.right, sy=clamp(fr.top+fr.height/2,pr.top+40,pr.bottom-40);

@@ -1,5 +1,5 @@
 /* Modularix — Design 1 · landing world: one module, built in six stages as you scroll.
-   Chapters (T): 0 brief · 1 design · 2 frame · 3 envelope · 4 systems · 5 transport · 6 live · 7 solutions · 8 proof · 9 contact
+   Chapters (T): 0 brief · 1 design · 2 frame · 3 envelope · 4 systems · 5 transport · 6 live · 7 solutions · 8 experience · 9 contact
    Every state below is a pure function of T, so scrolling back rewinds the build. */
 (function () {
   'use strict';
@@ -219,7 +219,7 @@
   // camera path as orbit parameters: target, azimuth (deg, from +z towards +x), elevation (deg), distance, fov
   const K_ = (t, l, az, el, d, fov = 34) => { const A = az * Math.PI / 180, E = el * Math.PI / 180; return { t, l, fov, o: [az, el, d], p: [l[0] + d * Math.cos(E) * Math.sin(A), l[1] + d * Math.sin(E), l[2] + d * Math.cos(E) * Math.cos(A)] }; };
   // two arcs, not a swing per stop: building it (Design → Transport) turns one way, past the near wall while it x-rays;
-  // the module turns once on the crane hook; in service (Transport → Proof) turns back the other way
+  // the module turns once on the crane hook; in service (Transport → Experience) turns back the other way
   const keys = [
     K_(0, [.5, 1.4, 0], 34, 13, 31),
     K_(1, [.4, .3, .4], 34, 50, 41, 32),

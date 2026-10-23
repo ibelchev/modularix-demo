@@ -18,7 +18,7 @@
 
    Fields: id · kind (photo | cad | doc) · w, h (full file) · src (rb | #project | issuer) · cap (caption) · alt ·
    anchor (a point on the 3D model, see MX.anchorAt in world-home.js) · sys (power | cool | it | safe, colours the pin) ·
-   chips [[code, reason]] · origin (where the file came from) */
+   chips [[code, reason]] · origin (where the file came from) · gallery (false: kept out of its project gallery) */
 window.MX_IMG = (function () {
   const RB = 'Reference build · MX-AI/HPC-120';
   const A22 = ['A22', 'A22: from the anonymised Projects page; publication rights and which build it shows to confirm'];
@@ -68,7 +68,7 @@ window.MX_IMG = (function () {
     { id: 'p73221-3-mv-switchgear', kind: 'photo', w: 768, h: 1024, src: '#73221', cap: 'Schneider Electric switchgear, four incoming sections.', alt: 'Four-section Schneider Electric switchgear with rotary handles above a white switchboard', anchor: 'teg', sys: 'power', chips: [A22, A23], origin: site('49108950eae947d4b60d21cc3d609943') },
     { id: 'p73221-4-bare-frame', kind: 'photo', w: 768, h: 1024, src: '#73221', cap: 'Bare frame in the hall, floor beams in and bracing set.', alt: 'Green welded steel module frame inside a factory hall, seen end-on', anchor: 'steel', chips: [A22, A23], origin: site('50ada2b837d049988dbedf89e9e3f668') },
     { id: 'p73221-5-lift-to-plinths', kind: 'photo', w: 1200, h: 1600, src: '#73221', cap: 'Lift from the trailer onto the plinths.', alt: 'Mobile crane lifting a green module from a trailer', anchor: 'lift', chips: [A22], origin: site('fbda8997555f4d72931858ec4807ddee') },
-    { id: 'p73221-6-roof-crew', kind: 'photo', w: 1200, h: 1600, src: '#73221', cap: 'Crew on the roof, pulling the transport wrap.', alt: 'Four workers on the roof of a green module pulling a white wrap', anchor: 'roof', chips: [A22, A24], origin: site('67d859bcfcef48faaede1666a6f201de') }
+    { id: 'p73221-6-roof-crew', kind: 'photo', gallery: false, w: 1200, h: 1600, src: '#73221', cap: 'Crew on the roof, pulling the transport wrap.', alt: 'Four workers on the roof of a green module pulling a white wrap', anchor: 'roof', chips: [A22, A24], origin: site('67d859bcfcef48faaede1666a6f201de') }
   ];
 
   /* certificates: holder on every scan is Synotech Global Services Romania SRL (A19) */
