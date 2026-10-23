@@ -217,27 +217,30 @@
 
   /* ------------------------------------------------------------ camera */
   // camera path as orbit parameters: target, azimuth (deg, from +z towards +x), elevation (deg), distance, fov
-  const K_ = (t, l, az, el, d, fov = 34) => { const A = az * Math.PI / 180, E = el * Math.PI / 180; return { t, l, fov, p: [l[0] + d * Math.cos(E) * Math.sin(A), l[1] + d * Math.sin(E), l[2] + d * Math.cos(E) * Math.cos(A)] }; };
+  const K_ = (t, l, az, el, d, fov = 34) => { const A = az * Math.PI / 180, E = el * Math.PI / 180; return { t, l, fov, o: [az, el, d], p: [l[0] + d * Math.cos(E) * Math.sin(A), l[1] + d * Math.sin(E), l[2] + d * Math.cos(E) * Math.cos(A)] }; };
+  // two arcs, not a swing per stop: building it (Design → Transport) turns one way, past the near wall while it x-rays;
+  // the module turns once on the crane hook; in service (Transport → Proof) turns back the other way
   const keys = [
     K_(0, [.5, 1.4, 0], 34, 13, 31),
     K_(1, [.4, .3, .4], 34, 50, 41, 32),
-    K_(2, [-.5, 1.4, 0], -52, 17, 28),
-    K_(3, [.6, 1.6, 0], 60, 10, 30),
-    K_(3.58, [-3.6, 1.0, -.3], 18, 46, 12.5, 38),
-    K_(3.86, [-6.4, 1.1, 0], -42, 40, 13.5, 38),
-    K_(4.16, [1.6, 1.3, -.6], 16, 27, 10.5, 40),
-    K_(4.44, [0, 1.1, 0], 30, 42, 25, 36),
-    K_(4.9, [0, 4.8, -2.5], -36, 13, 40, 36),
-    K_(5.25, [0, 2.6, 0], 44, 14, 31),
-    K_(5.55, [-1, 2.3, 0], 22, 8, 28, 40),
-    K_(5.95, [-.5, 1.4, 0], 42, 14, 33),
-    K_(6.25, [-3, 1.4, 0], -56, 15, 33),
-    K_(6.8, [17, 0, -7], 35, 34, 78),
-    K_(7, [17, 0, -7], -24, 42, 74),
-    K_(8, [17, 0, -7], 76, 17, 64),
+    K_(2, [-.5, 1.4, 0], 24, 17, 28),
+    K_(3, [.6, 1.6, 0], 15, 12, 30),
+    K_(3.58, [-3.6, 1.0, -.3], 8, 44, 12.5, 38),
+    K_(3.86, [-6.4, 1.1, 0], -4, 38, 13.5, 38),
+    K_(4.16, [1.6, 1.3, -.6], -14, 27, 11.5, 40),
+    K_(4.44, [0, 1.1, 0], -22, 40, 25, 36),
+    K_(4.9, [0, 4.8, -2.5], -32, 13, 40, 36),
+    K_(5.1, [0, 4.8, -2.5], -34, 13, 40, 36), // hold while the module turns on the hook
+    K_(5.3, [0, 2.6, 0], -28, 14, 31),
+    K_(5.6, [-1, 2.3, 0], -16, 8, 28, 40),
+    K_(5.95, [-.5, 1.4, 0], -2, 14, 33),
+    K_(6.25, [-3, 1.4, 0], 12, 15, 33),
+    K_(6.8, [17, 0, -7], 28, 34, 78),
+    K_(7, [17, 0, -7], 40, 40, 74),
+    K_(8, [17, 0, -7], 62, 20, 64),
     K_(9, [-.5, 1.0, 0], 40, 9, 22, 36),
   ];
-  const rig = new G.Rig(camera, keys); ctx.rigs.push(rig);
+  const rig = new G.Rig(camera, keys); rig.orbit = true; ctx.rigs.push(rig);
   const sides = MX.chapters.map(c => ({ l: 1, r: -1, w: 0, c: 0 })[c.dataset.side || 'l']);
   const sideAt = T => { const i = Math.floor(T), f = smooth(clamp(T - i, 0, 1)); return lerp(sides[i] ?? 0, sides[Math.min(sides.length - 1, i + 1)] ?? 0, f); };
 
@@ -420,12 +423,15 @@
     // transport choreography
     const yLift = Tt < 5.12 ? R(Tt, 4.86, 5.06) * 3.4 : Tt < 5.8 ? lerp(3.4, 1.32, R(Tt, 5.12, 5.27)) : lerp(1.32, .35, R(Tt, 5.8, 5.96));
     mod.position.y = yLift;
+    // one full turn on the hook while the camera holds, so the visitor sees every side and it lands as it left
+    const spin = R(Tt, 4.9, 5.11) * Math.PI * 2;
+    mod.rotation.y = spin;
     const truckX = Tt < 5.5 ? lerp(-38, 0, R(Tt, 4.94, 5.12)) : lerp(0, 36, R(Tt, 5.86, 6.05));
     truckMesh.position.x = truckX;
     G.setLines(truckMesh, R(Tt, 4.9, 5.05), win(Tt, 4.92, 5.02, 5.95, 6.06) * keep);
     const crane = win(Tt, 4.55, 4.72, 5.22, 5.38) * keep;
     G.setLines(craneMesh, R(Tt, 4.55, 4.86), crane);
-    G.setLines(rigMesh, R(Tt, 4.66, 4.86), crane); rigMesh.position.y = yLift;
+    G.setLines(rigMesh, R(Tt, 4.66, 4.86), crane); rigMesh.position.y = yLift; rigMesh.rotation.y = spin;
     const spY = 7.4 + yLift; ropeMesh.position.y = spY; ropeMesh.scale.y = Math.max(.01, tip[1] - spY);
     G.setLines(ropeMesh, R(Tt, 4.7, 4.86), crane);
     const travel = R(Tt, 5.25, 5.78);

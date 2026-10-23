@@ -221,12 +221,12 @@ body.gl-ready #gl{opacity:1}
 .exh{position:fixed;top:0;bottom:0;right:0;left:calc(var(--nav) + var(--content));z-index:1;pointer-events:none;
   font:400 10px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#8fb2da}
 .exh .cnr,.exh .xh,.exh .ruler,.exh .tblock{opacity:var(--r2)}
-.exh .tele{opacity:var(--r2);transition:opacity .5s var(--ease)}
-body.reel .exh .tele{opacity:1}
+.exh .tele{opacity:calc(1 - var(--r));transition:opacity .5s var(--ease)}
+html.past-hero .exh .tele{visibility:hidden}
 /* telemetry, compact: header line, reel line, 2 × 2 readings, build line */
 .exh .tele{width:236px;padding:9px 11px 10px;gap:8px;font-size:9.5px}
-/* first screen: the panel sits bottom right; it rises with the rail reveal (--r) and docks top right */
-.exh .tele{transform:translateY(calc((1 - var(--r)) * (100vh - 44px - 100%)))}
+/* first screen only: the panel sits bottom right and fades out with the rail reveal (--r); the title block holds top right after that */
+.exh .tele{top:auto;bottom:22px}
 .tele .hd{align-items:center}
 .tele .hd .live{flex:1;color:var(--ink);letter-spacing:.12em}
 .tele .hd em{font-style:normal;color:var(--dim);font-variant-numeric:tabular-nums}
@@ -298,7 +298,7 @@ body.reel .exh .tele{opacity:1}
 .seg i{position:relative;height:6px;background:rgba(150,190,240,.14);overflow:hidden}
 .seg i::after{content:"";position:absolute;inset:0;background:var(--blue);transform-origin:left;transform:scaleX(var(--v,0))}
 
-.tblock{position:absolute;right:22px;bottom:22px;display:grid;grid-template-columns:auto auto auto;border:1px solid var(--line2);background:var(--panel);font-size:9px}
+.tblock{position:absolute;right:22px;top:22px;display:grid;grid-template-columns:auto auto auto;border:1px solid var(--line2);background:var(--panel);font-size:9px}
 .tblock div{padding:6px 10px;border-left:1px solid var(--line);display:grid;gap:2px}
 .tblock div:first-child{border-left:0}
 .tblock .wide{grid-column:1 / -1;border-left:0;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:14px}
@@ -449,7 +449,7 @@ main{position:relative;z-index:3}
 .sub h3{font-size:24px;font-weight:500;margin-bottom:12px}
 .sub p{color:var(--dim)}
 .sub p + p{margin-top:12px}
-.tall{min-height:92vh}
+.tall{min-height:0}
 
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin-top:22px}
 /* corner brackets top-left and bottom-right on each tile */
@@ -808,7 +808,6 @@ html.pl-full .exh .tele{opacity:0!important;visibility:hidden}
 @media (min-width:701px) and (max-width:900px) and (min-height:501px){
   :root{--content:clamp(380px,50vw,450px);--pad:28px}
   .exh{top:var(--bar)}
-  .exh .tele{transform:translateY(calc((1 - var(--r)) * (100vh - var(--bar) - 44px - 100%)))}
   .ch-sec{scroll-margin-top:var(--bar)}
   .sheet{top:calc(var(--bar) + 1rem);left:1rem;right:1rem;bottom:1rem}
   .pw{grid-template-columns:minmax(340px,50%) 1fr}
@@ -1196,6 +1195,7 @@ html.lean .pw-view::before{display:none}
     R=all?1:clamp(scrollY/(vh*.6),0,1); R2=all?1:clamp((scrollY-vh*.12)/(vh*.6),0,1);
     doc.style.setProperty('--r',smooth(R).toFixed(4)); doc.style.setProperty('--r2',smooth(R2).toFixed(4));
     doc.style.setProperty('--sy',Math.round(scrollY));
+    doc.classList.toggle('past-hero',R>=1);
     /* hero copy fades over the first ~28% of a viewport, ahead of the rails covering it */
     const hf=all?0:1-clamp(scrollY/(vh*.28),0,1);
     doc.style.setProperty('--hf',(hf*hf*(3-2*hf)).toFixed(4));
@@ -1693,7 +1693,7 @@ html.lean .pw-view::before{display:none}
   const EV={1:[['A','rb-cad-cutaway'],['B','rb-cad-systems']],
     2:[['A','rb-frame-steel'],['B','p73221-4-bare-frame'],['C','rb-cad-frame-racks']],
     3:[['A','rb-glands-cabled'],['B','p12892-1-cable-sleeves'],['C','rb-cad-envelope'],['D','p77312-5-wrapped-on-site']],
-    4:[['P1','rb-power-switchboards'],['P2','p12892-4-lv-switchboard'],['K1','p77312-1-chw-headers'],['K2','p12892-3-chw-flanges'],['C1','rb-it-racks'],['C2','p12892-2-rack-row'],['S1','p32132-4-fire-panels']],
+    4:[['P1','rb-power-switchboards'],['P2','p12892-4-lv-switchboard'],['K1','p77312-1-chw-headers'],['K2','p12892-3-chw-flanges'],['C1','rb-it-racks'],['S1','p32132-4-fire-panels']],
     5:[['A','rb-transport-crane'],['B','p77312-2-crane-lift'],['C','p73221-5-lift-to-plinths']],
     6:[['A','rb-live-deployed']]};
   const STAGE_EL=['s-design','s-frame','s-envelope','s-systems','s-transport','s-live'];
@@ -1883,7 +1883,7 @@ html.lean .pw-view::before{display:none}
   const noGL=msg=>{ doc.classList.add('no-gl'); const n=document.getElementById('glnote'); n.hidden=false; n.textContent=msg; };
   const hasGL=(()=>{ try{ return !!document.createElement('canvas').getContext('webgl2'); }catch(e){ return false; } })();
   if(!hasGL) noGL('3D scene unavailable: this browser has WebGL 2 turned off or unsupported.');
-  else MX.loadScripts(['vendor/three.global.min.js','engine/gl-kit.js?v=12','engine/container-model.js?v=11','engine/product-models.js?v=2','engine/world-home.js?v=15'])
+  else MX.loadScripts(['vendor/three.global.min.js','engine/gl-kit.js?v=13','engine/container-model.js?v=11','engine/product-models.js?v=2','engine/world-home.js?v=17'])
     .then(()=>{ if(!MX.camera) noGL('3D scene unavailable: WebGL could not start.'); })
     .catch(err=>{ console.error(err); noGL('3D scene unavailable: a script failed to load ('+(err&&err.target&&err.target.src||err)+')'); });
 })();

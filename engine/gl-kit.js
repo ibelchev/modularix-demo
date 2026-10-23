@@ -432,7 +432,13 @@
         const t = u, t2 = t * t, t3 = t2 * t;
         return [0, 1, 2].map(j => .5 * ((2 * P1[j]) + (-P0[j] + P2[j]) * t + (2 * P0[j] - 5 * P1[j] + 4 * P2[j] - P3[j]) * t2 + (-P0[j] + 3 * P1[j] - 3 * P2[j] + P3[j]) * t3));
       };
-      return { p: cr('p'), l: cr('l'), fov: lerp(k[i].fov || 36, k[i + 1].fov || 36, u) };
+      const fov = lerp(k[i].fov || 36, k[i + 1].fov || 36, u);
+      // orbit mode: interpolate azimuth / elevation / distance around the target, so a turn arcs around the subject instead of cutting in
+      if (this.orbit && k[i].o) {
+        const l = cr('l'), [az, el, d] = cr('o'), A = az * Math.PI / 180, E = el * Math.PI / 180;
+        return { p: [l[0] + d * Math.cos(E) * Math.sin(A), l[1] + d * Math.sin(E), l[2] + d * Math.cos(E) * Math.cos(A)], l, fov };
+      }
+      return { p: cr('p'), l: cr('l'), fov };
     }
     update(T, dt, extra) {
       const s = this.sample(T);
